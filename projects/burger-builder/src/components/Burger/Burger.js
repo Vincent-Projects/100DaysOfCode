@@ -5,14 +5,16 @@ import classes from './Burger.module.css';
 
 const Burger = () => {
     return (
-        <div className={classes.Burger}>
-            <BurgerIngredient type="bread-top" />
-            <BurgerIngredient type="salad" />
-            <BurgerIngredient type="pickle" />
-            <BurgerIngredient type="meat" />
-            <BurgerIngredient type="cheese" />
-            <BurgerIngredient type="bread-bottom" />
-        </div >
+        <div className={classes.Centered}>
+            <div className={classes.Burger}>
+                <BurgerIngredient type="bread-top" />
+                <BurgerIngredient type="salad" />
+                <BurgerIngredient type="pickle" />
+                <BurgerIngredient type="meat" />
+                <BurgerIngredient type="cheese" />
+                <BurgerIngredient type="bread-bottom" />
+            </div >
+        </div>
     );
 }
 

@@ -1,5 +1,5 @@
 .BreadBottom {
-    width: 25%;
+    width: 40%;
     height: 10%;
     background: linear-gradient(#f3a547, #d58a30, #905b1b);
     border-radius: 5px 5px 13px 13px;
@@ -7,7 +7,7 @@
 }
 
 .BreadTop {
-    width: 25%;
+    width: 40%;
     height: 15%;
     background: linear-gradient(#f3a547, #d58a30, #905b1b);
     border-radius: 45% 45% 10px 10px;
@@ -16,7 +16,7 @@
 }
 
 .Meat {
-    width: 25%;
+    width: 40%;
     height: 9%;
     background: linear-gradient(90deg, #6e3807, #863426);
     margin: 0.3rem;
@@ -24,7 +24,7 @@
 }
 
 .Salad {
-    width: 25%;
+    width: 40%;
     height: 6%;
     align-self: center;
     background: linear-gradient(35deg, #7bbe53, #5a903a, #5aab2b, #3a9009);
@@ -33,7 +33,7 @@
 }
 
 .Cheese {
-    width: 25%;
+    width: 40%;
     height: 4%;
     align-self: center;
     background: linear-gradient(35deg, #cdb800, #d7ca54);
@@ -42,7 +42,7 @@
 }
 
 .Pickle {
-    width: 6%;
+    width: 8%;
     height: 5%;
     align-self: center;
     background: linear-gradient(35deg, #0a3f0e, #3b633e);
