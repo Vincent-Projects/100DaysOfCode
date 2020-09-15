@@ -16,4 +16,8 @@ Link to my work : https://codepen.io/crysyrood/pen/NWNMzzx?editors=1100
 I took 2 days off and enjoy width my family, and today i'm back full of energy.
 I made a simple todo app with HTML / CSS / JS. I tried to make animations. And i make a loading bar. The more i code, the more i want to code. I have made a list of litle project i can make, and tomorow i will continue with Nodejs ( i'm more backend ^^ ).
 
-Link to my work https://codepen.io/crysyrood/pen/rNerxMP
+Link to my work : https://codepen.io/crysyrood/pen/rNerxMP
+
+I also work on animation to create a border but struggle to make it around the text.
+
+Link to my work : https://codepen.io/crysyrood/pen/LYNBLJa 
