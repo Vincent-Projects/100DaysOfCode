@@ -11,3 +11,9 @@ I learned about collapsing margins and now understand well the impact of margin 
 I built a simple drop down menu. I'm proud of the hover effect on the list items. But I struggle a lot with animation.
 
 Link to my work : https://codepen.io/crysyrood/pen/NWNMzzx?editors=1100
+
+# 2020, September 15
+I took 2 days off and enjoy width my family, and today i'm back full of energy.
+I made a simple todo app with HTML / CSS / JS. I tried to make animations. And i make a loading bar. The more i code, the more i want to code. I have made a list of litle project i can make, and tomorow i will continue with Nodejs ( i'm more backend ^^ ).
+
+Link to my work https://codepen.io/crysyrood/pen/rNerxMP
