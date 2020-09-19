@@ -21,3 +21,8 @@ Link to my work : https://codepen.io/crysyrood/pen/rNerxMP
 I also work on animation to create a border but struggle to make it around the text.
 
 Link to my work : https://codepen.io/crysyrood/pen/LYNBLJa 
+
+# 2020, September 19
+Today i built a simple connect 4 game. I struggle with diagonals but i was fun.
+
+Link to my work : https://codepen.io/crysyrood/pen/abNRYXq
