@@ -26,3 +26,9 @@ Link to my work : https://codepen.io/crysyrood/pen/LYNBLJa
 Today i built a simple connect 4 game. I struggle with diagonals but i was fun.
 
 Link to my work : https://codepen.io/crysyrood/pen/abNRYXq
+
+# 2020 September 20
+Today i make fun trying things with CSS. I discovered box-reflect, and i build fade animation on hover.
+I also add a random IA to Connect 4 and search for MinMax but struggle to really understand.
+
+Link to my work : https://codepen.io/crysyrood/pen/gOrBJVz
