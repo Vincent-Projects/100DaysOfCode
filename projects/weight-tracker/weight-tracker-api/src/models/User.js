@@ -7,12 +7,12 @@ const UserSchema = new mongoose.Schema({
         required: true,
         default: Date.now
     },
-    weights: [{
-        type: Weight
-    }],
     username: {
         type: String,
         required: true,
+        unique: true,
+        trim: true,
+        minlength: 4
     },
     email: {
         type: String,
