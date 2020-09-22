@@ -32,3 +32,6 @@ Today i make fun trying things with CSS. I discovered box-reflect, and i build f
 I also add a random IA to Connect 4 and search for MinMax but struggle to really understand.
 
 Link to my work : https://codepen.io/crysyrood/pen/gOrBJVz
+
+# 2020, September 22
+Today i decided to do the weight tracker app project. So i started with the backend, i made the mvp of the backend which include retreiving weights for a certaib month ( to show them in a graph ), add a new weight for today, and see a weight for a given weight id. The next step would be to build the MVP of React app. I need to understand routing with react and train with redux before. I need to fiish the design i draw on a paper. I struggle to be concistant on social media.
