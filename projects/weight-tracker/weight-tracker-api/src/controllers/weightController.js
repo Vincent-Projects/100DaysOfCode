@@ -66,16 +66,20 @@ exports.postWeight = (req, res, next) => {
 exports.getMonthWeights = (req, res, next) => {
     const { month } = req.params;
 
+    // the current date
     const today = new Date(Date.now());
 
+    // compute the start of the month desired
     const startDate = new Date();
     startDate.setMonth(today.getMonth() - month);
     startDate.setDate(1);
 
+    // compute the number of days in the month we want
     let daysInMonth = new Date(startDate);
     daysInMonth.setDate(0);
     daysInMonth = daysInMonth.getDate();
 
+    // compute the end of the month desired
     const endDate = new Date();
     endDate.setMonth(today.getMonth() - month);
     endDate.setDate(daysInMonth - 1);
