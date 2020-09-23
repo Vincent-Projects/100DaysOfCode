@@ -1,16 +1,24 @@
-const { json } = require('express');
 const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
-    const token = req.headers.authorization.split(' ')[1];
-    const decodedToken = jwt.decode(token);
+    const token = req.get('Authorization').split(' ')[1];
+    let decodedToken;
 
-    if (!decodedToken) {
-        const error = new Error('Error with JWT');
-        error.statusCode = 401;
-        return next(error);
+    try {
+        const SECRET_KEY = process.env.SECRET_KEY;
+        decodedToken = jwt.verify(token, SECRET_KEY);
+    } catch (err) {
+        err.statusCode = 500;
+        throw err;
     }
 
+    if (!decodedToken) {
+        const error = new Error('Error with Authentication');
+        error.statusCode = 401;
+        throw error;
+    }
+
+    console.log(decodedToken.userId);
     req.userId = decodedToken.userId;
     next();
 }

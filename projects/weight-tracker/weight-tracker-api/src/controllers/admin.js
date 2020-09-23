@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const SALT_ROUND = 15;
-const SECRET_KEY = 'weighttrackerapisecretjsonwebtokenkey';
 
 exports.postSignup = (req, res, next) => {
     const {
@@ -73,6 +72,8 @@ exports.postLogin = (req, res, next) => {
     } = req.body;
 
     let userRetreived;
+
+    const SECRET_KEY = process.env.SECRET_KEY;
 
     User.findOne({ email: email })
         .then(user => {
