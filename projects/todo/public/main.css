@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #2a2a2a;
+    color: white;
+    font-size: 1.1rem;
+    font-family: "Courier New", Courier, monospace;
+}
+
+input,
+select {
+    font-size: 100%;
+}
