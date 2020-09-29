@@ -5,11 +5,11 @@ const adminController = require('../controllers/admin');
 
 const router = express.Router();
 
-// POST /login
+// POST /users/login
 // Return the user token ad logged in
 router.post('/login', adminController.postLogin);
 
-// POST /signup
+// POST /users/signup
 // Save a new user to the database
 router.post('/signup', adminController.postSignup);
 

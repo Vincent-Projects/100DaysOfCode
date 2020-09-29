@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
+import {
+    Redirect
+} from "react-router-dom";
+
 import classes from './TodoList.module.css';
 import TodoItem from '../../components/TodoItem';
 import TodoInput from '../../components/TodoInput';
@@ -11,6 +15,7 @@ const TodoList = (props) => {
     const [input, setInput] = useState('');
 
     useEffect(() => {
+
         const token = props.token;
 
         fetch('http://localhost:8080/todos', {
@@ -58,6 +63,7 @@ const TodoList = (props) => {
             })
     }
 
+    console.log(todos);
     const todosList = todos.map(todo => <TodoItem done={todo.done} task={todo.task} key={todo._id} />);
 
     return (
@@ -69,7 +75,6 @@ const TodoList = (props) => {
             />
             <div className={classes.TodoListItems}>
                 {todosList.length > 0 ? todosList : "Enter new thing todo"}
-                <p>{props.token}</p>
             </div>
         </div>
     )
