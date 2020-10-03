@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 const SALT_ROUND = 15;
+const TOKEN_EXPIRE_TIME = 3600;
 
 exports.postSignup = (req, res, next) => {
     const {
@@ -93,12 +94,15 @@ exports.postLogin = (req, res, next) => {
                 throw error;
             }
 
-            const token = jwt.sign({ userId: userRetreived._id }, SECRET_KEY, { expiresIn: 3600 });
+            const token = jwt.sign({ userId: userRetreived._id }, SECRET_KEY, { expiresIn: TOKEN_EXPIRE_TIME });
 
             res.status(200).json({
                 success: true,
                 message: 'Successfully logged in',
-                token: token
+               	data: {
+									token: token,
+									expireIn: TOKEN_EXPIRE_TIME,
+								}
             });
         })
         .catch(err => {
