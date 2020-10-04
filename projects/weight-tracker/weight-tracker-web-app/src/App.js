@@ -1,17 +1,16 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
 } from 'react-router-dom';
-
+import { connect } from 'react-redux';
 
 import Login from './containers/auth/Login';
+import Home from './containers/Home';
 
-import classes from './App.module.css';
+const App = (props) => {
 
-const App = () => {
     return (
         <Router>
             <Switch>
@@ -22,11 +21,12 @@ const App = () => {
                     <p>Signup</p>
                 </Route>
                 <Route path="/">
-                    <p>Home</p>
+                    <Home />
                 </Route>
             </Switch>
         </Router>
     )
 };
+
 
 export default App;

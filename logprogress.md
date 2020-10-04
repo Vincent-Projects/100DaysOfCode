@@ -38,3 +38,9 @@ Today i decided to do the weight tracker app project. So i started with the back
 
 # 2020, September 29
 I'm not writing log constant but i'm going to improve that. This week i started create a game with a friend. I also started to create my weight tracker website and make the login design. I'm proud of what i've done.
+
+# 2020, September 30
+Today i have connected the API to the React app and make the login form working. I also started understanding redux and react router dom. I struggled though, to manage the token into the localstorage. I think i moved too fast between subject, again my curiosity is too high in those moments. I'm then making a pause in weight tracker app project and continue my burger builder with udemy courses and online documentations. I need to master React with Redux and react router dom first and have a deep understanding of what is going on. I also plan to use zettelkasten for a better learning of what i do and also write some articles.
+
+# 2020, October 04
+Today i built the  home page for my portfolio. I coded 4 hours without thinking about the time that have passed. I built a responsive mobile first home page with a menu animated and a scroll effect on mobile to show the menu.
