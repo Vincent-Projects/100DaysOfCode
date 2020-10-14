@@ -1,44 +1,51 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8" />
-		<title>Message App</title>	
-	</head>
-	<body>
-		<h1>Messages : </h1>
-		<ul id="messages"></ul>
-		<form id="form">
-			<input id="user" type='text' name='user' />
-			<input id="message" type='text' name='message' />
-			<button type='submit' >Send</button>
-		</form>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js" integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ==" crossorigin="anonymous"></script>
-		<script>
-			fetch('http://localhost:3000', {
-				method: 'GET',
-				headers: {
-					"Content-Type": "application/json"
-				}
-			}).then(result => {
-				return result.json()
-			})
-			.then(res => {
-			console.log(res.user);	
-			const socket = res.io;
-			const form = document.getElementById('form');
-			form.addEventListener('submit', function(e) {
-				e.preventDefault();
-				const user = document.getElementById('user').value;
-				const message = document.getElementById('message').value;
-				io.emit('post', {
-					message: {
-						user,
-						message
-					}
-				});
-			});
-			}).catch(err => console.log(err));
-			
-		</script>
-	</body>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+</head>
+<body>
+    <div>
+        <div>
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+        </div>
+        <div>
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+        </div>
+        <div>
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+        </div>
+    </div>
+    <p>Last move</p>
+    <ul id="list">
+
+    </ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"
+        integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ=="
+        crossorigin="anonymous"></script>
+    <script>
+        let socket = io();
+        (function() {            
+            let buttons = document.getElementsByTagName('button');
+            for(let i = 0; i < buttons.length; i++) {
+                buttons[i].addEventListener('click', function() {
+                    socket.emit('post', i);
+                });
+            }
+        })();
+        socket.on('add', id => {
+            let list = document.getElementById('list');
+            let newEntry = document.createElement('li');
+            newEntry.innerHTML = id;
+            list.appendChild(newEntry);
+        })
+    </script>
+</body>
 </html>
