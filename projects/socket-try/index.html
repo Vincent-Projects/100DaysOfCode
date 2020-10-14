@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>Message App</title>	
+	</head>
+	<body>
+		<h1>Messages : </h1>
+		<ul id="messages"></ul>
+		<form id="form">
+			<input id="user" type='text' name='user' />
+			<input id="message" type='text' name='message' />
+			<button type='submit' >Send</button>
+		</form>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js" integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ==" crossorigin="anonymous"></script>
+		<script>
+			fetch('http://localhost:3000', {
+				method: 'GET',
+				headers: {
+					"Content-Type": "application/json"
+				}
+			}).then(result => {
+				return result.json()
+			})
+			.then(res => {
+			console.log(res.user);	
+			const socket = res.io;
+			const form = document.getElementById('form');
+			form.addEventListener('submit', function(e) {
+				e.preventDefault();
+				const user = document.getElementById('user').value;
+				const message = document.getElementById('message').value;
+				io.emit('post', {
+					message: {
+						user,
+						message
+					}
+				});
+			});
+			}).catch(err => console.log(err));
+			
+		</script>
+	</body>
+</html>
