@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TicTacToe</title>
+    <link rel="stylesheet" href="/main.css">
+</head>
+<body>
+    <div id="info">
+        <input id="name-input" type="text" placeholder="Choose a name"/>
+        <button id="name-btn">Enter</button>
+    </div>
+    <div id="avaible-players">
+        <h3>Avaible Players</h3>
+        <ul id="player-list"></ul>
+    </div>
+    <div>
+        <div>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+        </div>
+        <div>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+        </div>
+        <div>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+            <button class="btn"> </button>
+        </div>
+    </div>
+    <p>Last move</p>
+    <ul id="list">
+
+    </ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.1/socket.io.js"
+        integrity="sha512-AcZyhRP/tbAEsXCCGlziPun5iFvcSUpEz2jKkx0blkYKbxU81F+iq8FURwPn1sYFeksJ+sDDrI5XujsqSobWdQ=="
+        crossorigin="anonymous"></script>
+    <script src="/index.js"></script>
+</body>
+</html>
