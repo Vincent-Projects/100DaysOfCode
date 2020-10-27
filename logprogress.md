@@ -55,3 +55,5 @@ Today i coded for 4 hours. I didn't see those hours pass. I wanted to train for 
 
 Here is the link of my work on codepen : https://codepen.io/crysyrood/pen/Pozpwzr
 
+# 2020 October 27
+Today i started to code the design for the blog in my portfolio. I watched video for implementing KeystoneJS but i decided to implement my own CMS. I already know enough about CRUD and already have implemented lot of it through some projects. I need to learn more about security and need to make design responsive.
