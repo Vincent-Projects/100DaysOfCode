@@ -57,3 +57,6 @@ Here is the link of my work on codepen : https://codepen.io/crysyrood/pen/Pozpwz
 
 # 2020 October 27
 Today i started to code the design for the blog in my portfolio. I watched video for implementing KeystoneJS but i decided to implement my own CMS. I already know enough about CRUD and already have implemented lot of it through some projects. I need to learn more about security and need to make design responsive.
+
+# 2020 October 28
+Today i finished the new design for my projects and changes are online. I also finaly made a simple effect while hovering cards that i wished i realized and i thought i will be complicated but i succeed.
