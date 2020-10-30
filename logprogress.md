@@ -60,3 +60,6 @@ Today i started to code the design for the blog in my portfolio. I watched video
 
 # 2020 October 28
 Today i finished the new design for my projects and changes are online. I also finaly made a simple effect while hovering cards that i wished i realized and i thought i will be complicated but i succeed.
+
+# 2020 October 30
+Today i started learning React. I learn a lot of new things, ReactDOM, props and state, class and functionnal components, styling. I build a simple app that manage account balance. with state for amount of money.

@@ -1,0 +1,41 @@
+.List {
+    list-style-type: none;
+    width: 90%;
+    padding: 0.8rem;
+}
+
+.Item {
+    padding: 1rem;
+    width: calc(100% - 3rem);
+    margin: 0.5rem;
+    box-shadow: 1px 2px 2px #282c34;
+    transition: 300ms;
+}
+
+.Item:hover {
+    box-shadow: 2px 3px 3px #111214;
+}
+
+.Item button {
+    color: orange;
+    padding: 0.3rem;
+    margin: 0.4rem;
+    height: calc(100% - 0.8rem);
+    background-color: transparent;
+    border: none;
+    border-radius: 15px;
+    transition: 300ms ease-in;
+    visibility: hidden;
+    width: 0px;
+    outline: transparent;
+}
+
+.Item button:hover {
+    background-color: orange;
+    color: black;
+}
+
+.Item:hover button {
+    visibility: visible;
+    width: auto;
+}

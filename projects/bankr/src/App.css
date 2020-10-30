@@ -1,0 +1,127 @@
+.App {
+    text-align: center;
+    background-color: #1c1c1c;
+    width: 100%;
+    height: 100%;
+    color: white;
+}
+
+.App-logo {
+    height: 40vmin;
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .App-logo {
+        animation: App-logo-spin infinite 20s linear;
+    }
+}
+
+.App-header {
+    background-color: #282c34;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.App-link {
+    color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.HeadBlance {
+    width: 100%;
+    height: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.BodyBalance {
+    width: 100%;
+    height: 70%;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.Button {
+    padding: 0.6rem 1rem;
+    font-size: 1.1rem;
+    color: white;
+    background-color: transparent;
+    border: 1px solid white;
+    transition: 300ms ease-in;
+}
+
+.Button:hover {
+    background-color: white;
+    color: black;
+}
+
+.Amount {
+    font-size: 3rem;
+    color: white;
+}
+
+.Title {
+    font-size: 1.3rem;
+}
+
+.Error {
+    color: red !important;
+    border-color: red !important;
+}
+
+.ConfirmPanel {
+    position: absolute;
+    top: calc(50% - 25%);
+    left: calc(50% - 30%);
+    width: 60%;
+    height: 50%;
+    background-color: #ccc;
+    box-shadow: 2px 3px 3px black;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    color: black;
+}
+
+.Button.Dark {
+    color: black;
+    border-color: black;
+}
+
+.Button.Dark:hover {
+    color: white;
+    background-color: black;
+}
+
+.Input {
+    padding: 1rem;
+    font-size: 1.3rem;
+    color: black;
+    background-color: transparent;
+    border: none;
+    outline: #ccc;
+    border-bottom: 1px solid black;
+    transition: 300ms;
+}
+
+.Input:active,
+.Input:focus {
+    border-width: 2px;
+}
