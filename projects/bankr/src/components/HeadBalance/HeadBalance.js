@@ -1,4 +1,9 @@
+import { useEffect } from 'react';
+
 const HeadBalance = (props) => {
+    useEffect(() => {
+        console.log("[HeadBalance.js] useEffect");
+    }, [props.amount]);
     return (
         <div className="HeadBlance">
             <div>

@@ -1,28 +1,33 @@
-import { useState } from 'react';
+import React from 'react';
 import './App.css';
 import BodyBalance from '../components/BodyBalance/BodyBalance';
 import ConfirmPanel from '../components/ConfirmPanel/ConfirmPanel';
 import HeadBalance from '../components/HeadBalance/HeadBalance';
 
-function App() {
-  const [amount, setAmount] = useState(0);
-  const [transactions, setTransactions] = useState([]);
-  const [newTrans, setNewTrans] = useState(0);
-  const [confirmActive, setConfirmActive] = useState(false);
-  const [error, setError] = useState(false);
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      amount: 0,
+      transactions: [],
+      newTrans: 0,
+      confirmActive: false,
+      error: false
+    };
+  }
 
-  const confirmHandler = () => {
-    if (newTrans === "" || newTrans === 0) {
-      setError(true);
+  confirmHandler = () => {
+    if (this.state.newTrans === "" || this.state.newTrans === 0) {
+      this.setState({ error: true });
       return false;
     }
     let positive = true;
 
-    if (newTrans.charAt(0) === "-") {
+    if (this.state.newTrans.charAt(0) === "-") {
       positive = false;
     }
 
-    const transFiltered = newTrans.replace("-", "");
+    const transFiltered = this.state.newTrans.replace("-", "");
 
     const transaction = {
       id: Math.floor(Math.random() * 10000),
@@ -30,70 +35,81 @@ function App() {
       amount: Math.floor(transFiltered * 100) / 100
     };
 
-    setTransactions([
-      ...transactions,
-      transaction
-    ]);
+    const newAmount = Math.floor((+this.state.amount + +this.state.newTrans) * 100) / 100;
 
-    const newAmount = Math.floor((+amount + +newTrans) * 100) / 100;
-    setAmount(newAmount);
-    setNewTrans(0);
 
-    const updatedConfirmActive = !confirmActive;
-    setConfirmActive(updatedConfirmActive);
+    const updatedConfirmActive = !this.state.confirmActive;
 
-    setError(false);
+    this.setState({
+      transactions: [
+        ...this.state.transactions,
+        transaction
+      ],
+      newTrans: 0,
+      amount: newAmount,
+      error: false,
+      confirmActive: updatedConfirmActive
+    });
   }
 
-  const deleteTransactionHandler = (id) => {
-    const filteredTransactions = transactions.filter(transaction => transaction.id !== id);
-    setTransactions(filteredTransactions);
+  deleteTransactionHandler = (id) => {
+    const filteredTransactions = this.state.transactions.filter(transaction => transaction.id !== id);
 
-    const amountDelete = transactions.find(trans => trans.id === id);
-    console.log(amountDelete);
+    const amountDelete = this.state.transactions.find(trans => trans.id === id);
     let newAmount;
 
     if (amountDelete.positive) {
-      newAmount = amount - amountDelete.amount;
+      newAmount = this.state.amount - amountDelete.amount;
     } else {
-      newAmount = amount + amountDelete.amount;
+      newAmount = this.state.amount + amountDelete.amount;
     }
 
-    setAmount(newAmount);
+    this.setState({
+      transactions: filteredTransactions,
+      amount: newAmount
+    });
   }
 
-  const addTransactionHandler = () => {
-    const updatedConfirmActive = !confirmActive;
-    setConfirmActive(updatedConfirmActive);
+  addTransactionHandler = () => {
+    const updatedConfirmActive = !this.state.confirmActive;
+    this.setState({
+      confirmActive: updatedConfirmActive
+    });
   }
 
-  const resetConfirmHandler = () => {
-    if (confirmActive) {
-      setConfirmActive(!confirmActive);
+  resetConfirmHandler = () => {
+    if (this.state.confirmActive) {
+      this.setState({
+        confirmActive: !this.state.confirmActive
+      });
     }
   }
 
-  return (
-    <div className="App" onClick={resetConfirmHandler}>
-      <ConfirmPanel
-        error={error}
-        newTrans={newTrans}
-        confirmHandler={confirmHandler}
-        setNewTrans={setNewTrans}
-        isActive={confirmActive}
-      />
+  render() {
+    const filteredAmount = Math.floor((this.state.amount) * 100) / 100
 
-      <HeadBalance
-        amount={amount}
-      />
+    return (
+      <div className="App" onClick={this.resetConfirmHandler} >
+        <ConfirmPanel
+          error={this.state.error}
+          newTrans={this.state.newTrans}
+          confirmHandler={this.confirmHandler}
+          setNewTrans={(text) => this.setState({ newTrans: text })}
+          isActive={this.state.confirmActive}
+        />
 
-      <BodyBalance
-        transactions={transactions}
-        deleteItem={deleteTransactionHandler}
-        addHandler={addTransactionHandler}
-      />
-    </div >
-  );
+        <HeadBalance
+          amount={filteredAmount}
+        />
+
+        <BodyBalance
+          transactions={this.state.transactions}
+          deleteItem={this.deleteTransactionHandler}
+          addHandler={this.addTransactionHandler}
+        />
+      </div >
+    );
+  }
 }
 
 export default App;
