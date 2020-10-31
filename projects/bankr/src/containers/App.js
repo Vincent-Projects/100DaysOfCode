@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import './App.css';
-import List from './List/List';
+import BodyBalance from '../components/BodyBalance/BodyBalance';
+import ConfirmPanel from '../components/ConfirmPanel/ConfirmPanel';
+import HeadBalance from '../components/HeadBalance/HeadBalance';
 
 function App() {
   const [amount, setAmount] = useState(0);
@@ -71,32 +73,25 @@ function App() {
     }
   }
 
-  const btnClassName = error ? "Input Error" : "Input";
-
-  const confirmPanel = confirmActive ? <div className="ConfirmPanel" onClick={event => event.stopPropagation()}>
-    <h1>Transaction</h1>
-    <input className={btnClassName} type="number" value={newTrans} onChange={(event) => setNewTrans(event.target.value)} />
-    <button className="Button Dark" onClick={confirmHandler}>Add</button>
-  </div> : null;
-
   return (
     <div className="App" onClick={resetConfirmHandler}>
-      {confirmPanel}
-      <div className="HeadBlance">
-        <div>
-          <h1 className="Title">Current Balance</h1>
-          <p className="Amount">$ {amount}</p>
-        </div>
-      </div>
-      <div className="BodyBalance">
-        <div>
-          <h1 className="Title">Recent Transactions</h1>
-          <List transactions={transactions} deleteItem={deleteTransactionHandler} />
-        </div>
-        <div>
-          <button className="Button" onClick={addTransactionHandler}>Add Transaction</button>
-        </div>
-      </div>
+      <ConfirmPanel
+        error={error}
+        newTrans={newTrans}
+        confirmHandler={confirmHandler}
+        setNewTrans={setNewTrans}
+        isActive={confirmActive}
+      />
+
+      <HeadBalance
+        amount={amount}
+      />
+
+      <BodyBalance
+        transactions={transactions}
+        deleteItem={deleteTransactionHandler}
+        addHandler={addTransactionHandler}
+      />
     </div >
   );
 }
