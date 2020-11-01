@@ -1,14 +1,14 @@
+import { useContext } from "react";
 import Transactions from './Transactions/Transactions';
+import TransactionsContext from '../../context/Transactions';
 
 const BodyBalance = (props) => {
+    const { addTransaction } = useContext(TransactionsContext);
     return (
         <div className="BodyBalance">
-            <Transactions
-                transactions={props.transactions}
-                deleteItem={props.deleteItem}
-            />
+            <Transactions />
             <div>
-                <button className="Button" onClick={props.addHandler}>Add Transaction</button>
+                <button className="Button" onClick={addTransaction}>Add Transaction</button>
             </div>
         </div>
     );

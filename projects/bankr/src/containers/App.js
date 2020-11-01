@@ -1,23 +1,41 @@
-import React from 'react';
+import React, { PureComponent } from 'react';
 import './App.css';
 import BodyBalance from '../components/BodyBalance/BodyBalance';
 import ConfirmPanel from '../components/ConfirmPanel/ConfirmPanel';
 import HeadBalance from '../components/HeadBalance/HeadBalance';
+import TransactionsContext from '../context/Transactions';
+import axios from 'axios';
 
-class App extends React.Component {
+class App extends PureComponent { // PureComponent is a normal component that use the shouldComponentUpdate() method to check if any of the props changed
   constructor(props) {
     super(props);
     this.state = {
+      tasks: [],
       amount: 0,
       transactions: [],
-      newTrans: 0,
+      newTrans: "",
       confirmActive: false,
       error: false
     };
   }
 
+  static contextType = TransactionsContext;
+
+  componentDidMount() {
+    axios.get("https://jsonplaceholder.typicode.com/todos")
+      .then(result => {
+        if (result.status === 200) {
+          this.setState({
+            tasks: result.data
+          });
+        }
+      }).catch(err => {
+        console.log("error");
+      })
+  }
+
   confirmHandler = () => {
-    if (this.state.newTrans === "" || this.state.newTrans === 0) {
+    if (this.state.newTrans === "" || this.state.newTrans === 0 || this.state.newTrans === null) {
       this.setState({ error: true });
       return false;
     }
@@ -40,15 +58,17 @@ class App extends React.Component {
 
     const updatedConfirmActive = !this.state.confirmActive;
 
-    this.setState({
-      transactions: [
-        ...this.state.transactions,
-        transaction
-      ],
-      newTrans: 0,
-      amount: newAmount,
-      error: false,
-      confirmActive: updatedConfirmActive
+    this.setState((prevState, props) => { // Use this form when the value of the futur state depends on the previous state
+      return {
+        transactions: [
+          ...prevState.transactions,
+          transaction
+        ],
+        newTrans: "",
+        amount: newAmount,
+        error: false,
+        confirmActive: updatedConfirmActive
+      }
     });
   }
 
@@ -79,8 +99,10 @@ class App extends React.Component {
 
   resetConfirmHandler = () => {
     if (this.state.confirmActive) {
-      this.setState({
-        confirmActive: !this.state.confirmActive
+      this.setState((prevState, props) => {
+        return {
+          confirmActive: !prevState.confirmActive
+        }
       });
     }
   }
@@ -102,11 +124,37 @@ class App extends React.Component {
           amount={filteredAmount}
         />
 
-        <BodyBalance
-          transactions={this.state.transactions}
-          deleteItem={this.deleteTransactionHandler}
-          addHandler={this.addTransactionHandler}
-        />
+        <TransactionsContext.Provider
+          value={{
+            transactions: this.state.transactions,
+            addTransaction: this.addTransactionHandler,
+            deleteTransaction: this.deleteTransactionHandler
+          }}
+        >
+          <BodyBalance />
+        </TransactionsContext.Provider>
+
+        <div style={{
+          display: "flex",
+          flexDirection: "column",
+          marginLeft: "5rem"
+        }}>
+          {
+            this.state.tasks.map(task => {
+              return <div
+                key={task.id}
+                style={{
+                  display: 'flex',
+                  flexDirection: "row",
+                  color: "black",
+                  marginTop: "1rem"
+                }}>
+                <input type="checkbox" checked={Boolean(task.completed)} onChange={() => console.log("Anyway")} />
+                <p style={{ marginLeft: "1rem" }}>{task.title}</p>
+              </div>
+            })
+          }
+        </div>
       </div >
     );
   }

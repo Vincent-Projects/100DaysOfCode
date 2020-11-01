@@ -1,6 +1,12 @@
+import React, { useEffect } from "react";
 import classes from './List.module.css';
 
 function List(props) {
+    useEffect(() => {
+        console.log("I'm Here");
+    }, [props.transactions]);
+
+    console.log("I m also here");
     const items = props.transactions.map(item => <Item key={item.id} id={item.id} amount={item.amount} positive={item.positive} deleteItem={props.deleteItem} />);
     let itemsElements = items;
 
@@ -19,4 +25,4 @@ function Item({ id, amount, positive, deleteItem }) {
     </li>
 }
 
-export default List;
+export default React.memo(List);

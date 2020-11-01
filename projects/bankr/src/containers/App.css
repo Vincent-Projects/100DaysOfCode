@@ -98,6 +98,24 @@
     justify-content: space-around;
     align-items: center;
     color: black;
+    transition: 400ms;
+}
+
+.PanelActive {
+    animation: 400ms forwards panelAnim;
+}
+
+.PanelReverse {
+    animation: 400ms forwards reverse panelAnim;
+}
+
+@keyframes panelAnim {
+    from {
+        top: -100vh;
+    }
+    to {
+        top: calc(50% - 25%);
+    }
 }
 
 .Button.Dark {

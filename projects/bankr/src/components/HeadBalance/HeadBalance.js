@@ -1,9 +1,7 @@
-import { useEffect } from 'react';
+import React from 'react';
 
 const HeadBalance = (props) => {
-    useEffect(() => {
-        console.log("[HeadBalance.js] useEffect");
-    }, [props.amount]);
+    console.log("[HeadBalance.js] Render()");
     return (
         <div className="HeadBlance">
             <div>
@@ -14,4 +12,4 @@ const HeadBalance = (props) => {
     );
 }
 
-export default HeadBalance;
+export default React.memo(HeadBalance);
