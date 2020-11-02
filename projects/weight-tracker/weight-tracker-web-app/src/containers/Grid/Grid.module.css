@@ -1,0 +1,9 @@
+.Grid {
+    display: grid;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    grid-template-rows: [One] 1fr [Two] 1fr [Three] 1fr;
+    grid-template-columns: [col-start] 1fr 1fr 1fr [col-end];
+    gap: 1rem;
+    padding: 1rem;
+}

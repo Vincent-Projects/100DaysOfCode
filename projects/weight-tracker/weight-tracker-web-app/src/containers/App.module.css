@@ -1,0 +1,53 @@
+.App {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.ToolBarMargin {
+    margin-top: 5rem;
+    width: 100%;
+}
+
+.ToolBar {
+    width: 100%;
+    background-color: #6d42a5;
+    color: white;
+    position: fixed;
+}
+
+.ToolBar ul {
+    display: flex;
+    width: calc(100% - 2rem);
+    flex-direction: row;
+    justify-content: space-around;
+    list-style-type: none;
+    padding: 1rem;
+}
+
+.ToolBar li {
+    font-size: 1.3rem;
+}
+
+@media only screen and (min-width: 786px) {
+    .App {
+        flex-direction: row;
+    }
+
+    .ToolBar {
+        height: 100vh;
+        width: 20%;
+    }
+
+    .ToolBar ul {
+        flex-direction: column;
+    }
+
+    .ToolBarMargin {
+        margin-top: 0;
+        margin-left: 20%;
+    }
+}

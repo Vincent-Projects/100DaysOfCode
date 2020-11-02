@@ -1,0 +1,15 @@
+.Line {
+    grid-column: col-start / col-end;
+}
+
+.One {
+    grid-row: One / span 1;
+}
+
+.Two {
+    grid-row: Two / span 1;
+}
+
+.Three {
+    grid-row: Three / span 1;
+}
