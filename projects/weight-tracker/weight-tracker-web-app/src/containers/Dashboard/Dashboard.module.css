@@ -1,0 +1,40 @@
+.GoalContainer {
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.GoalTitle {
+    text-align: center;
+}
+
+.GoalBody {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    width: 100%;
+    height: 100%;
+}
+
+.Goal {
+    text-align: center;
+}
+
+.GoalPercentageBarContainer {
+    width: calc(100% - 2px);
+    height: 1rem;
+    position: relative;
+    border: 1px solid var(--primary);
+    color: white;
+    text-align: center;
+}
+
+.GoalPercentageBar {
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: var(--primary);
+}

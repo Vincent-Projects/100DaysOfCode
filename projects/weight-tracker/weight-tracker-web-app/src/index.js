@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-
+import './theme.css';
 
 import App from './containers/App';
 

@@ -1,0 +1,148 @@
+.ToolBar {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--primary);
+    color: var(--on-primary);
+    position: fixed;
+}
+
+.ToolBar nav {
+    display: flex;
+    width: 100%;
+}
+
+.ToolBar ul {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-around;
+    list-style-type: none;
+}
+
+.Link:hover p {
+    opacity: 0.7;
+}
+
+.LinkItem {
+    width: calc(100% - 1rem);
+    margin: 1rem;
+    margin-right: 0;
+    transition: 300ms;
+    outline: transparent;
+    position: relative;
+}
+
+.Link {
+    display: flex;
+    width: calc(100% - 2rem);
+    height: calc(100% - 2rem);
+    padding: 1rem;
+    font-size: 1.1rem;
+    text-decoration: none;
+    align-items: center;
+    color: inherit;
+    border-top-left-radius: 6px;
+    border-bottom-left-radius: 6px;
+    position: relative;
+}
+
+.Link:after {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 0;
+    top: -24px;
+    content: "";
+    z-index: 2;
+}
+
+.Link:before {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 0;
+    top: -24px;
+    border-bottom-right-radius: 50%;
+    content: "";
+    z-index: 3;
+}
+
+.LinkItem:after {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 0;
+    bottom: -24px;
+    content: "";
+    z-index: 2;
+}
+
+.LinkItem:before {
+    position: absolute;
+    width: 24px;
+    height: 24px;
+    right: 0;
+    bottom: -24px;
+    border-top-right-radius: 50%;
+    content: "";
+    z-index: 3;
+}
+
+.Link img {
+    width: 1.4rem;
+    height: auto;
+    margin-right: 1rem;
+    color: var(--on-primary);
+}
+
+.Svg {
+    width: 1.4rem;
+    height: auto;
+    margin-right: 1rem;
+    color: var(--on-primary);
+}
+
+.Active {
+    background: var(--on-primary);
+    color: var(--primary);
+}
+
+.Active:after {
+    background: var(--on-primary);
+}
+
+.Active:before {
+    background: var(--primary);
+}
+
+/*
+.LinkItem:after + .Active {
+    background: var(--on-primary);
+}
+
+.LinkItem:before + .Active {
+    background: var(--primary);
+} */
+
+.Active .Svg {
+    color: var(--primary);
+}
+
+@media only screen and (min-width: 786px) {
+    .ToolBar {
+        height: 100vh;
+        width: 16%;
+    }
+
+    .ToolBar ul {
+        flex-direction: column;
+    }
+
+    .ToolBarMargin {
+        margin-top: 0;
+        margin-left: 20%;
+    }
+}

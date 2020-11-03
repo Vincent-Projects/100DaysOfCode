@@ -82,7 +82,7 @@ const GraphValue = props => {
         <div className={classes.GraphColumnValue}>
             <div>{props.title}</div>
             <div className={classes.GraphPercentageBarContainer}>
-                <div className={classes.GraphPercentageBar} style={{ height: `${props.percentage}%`, background: `rgba(109, 66, 165, ${props.intensity})` }}></div>
+                <div className={classes.GraphPercentageBar} style={{ height: `${props.percentage}%`, background: `rgba(26, 35, 126, ${props.intensity})` }}></div>
             </div>
         </div>
     )
