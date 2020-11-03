@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import classes from './App.module.css';
 import { isToday } from "../utils/date/compareDate";
-import { weightsDiff } from '../utils/weight/compareWeight';
+import { weightsDiff, averageWeightPerMonths, weightToCurrentWeekGraph } from '../utils/weight/compareWeight';
 
 import axios from "axios";
 
@@ -18,7 +18,7 @@ class App extends Component {
     componentDidMount() {
         axios.get("https://weightrack.herokuapp.com/v1/weights/year/2020", {
             headers: {
-                Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjY5ZjQ5NDllYTU4MjNhYmNkN2U1OTciLCJpYXQiOjE2MDQzMjU5MzUsImV4cCI6MTYwNDMyOTUzNX0.UP3VEPwAXR0cbXKtLhmw9JP8K_V7UqRenfL98je1hYs",
+                Authorization: "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI1ZjY5ZjQ5NDllYTU4MjNhYmNkN2U1OTciLCJpYXQiOjE2MDQ0MDk1NjgsImV4cCI6MTYwNDQxMzE2OH0.1VMNX4sozUPcKlJGH3Mdxb5uVtGvw9_3yE0Ymgthse8",
                 "Content-Type": "application/json"
             }
         })
@@ -47,12 +47,16 @@ class App extends Component {
                 lastWeight = this.state.weights[weightsLenght - 2];
                 todayWeight = this.state.weights[weightsLenght - 1];
             }
+
+            if (todayWeight) {
+                todayWeightDiff = 0;//weightsDiff(todayWeight.weight, lastWeight.weight) || 0;
+            }
             lastWeightDiff = weightsDiff(weightBeforeLast.weight, lastWeight.weight);
-            todayWeightDiff = weightsDiff(todayWeight.weight, lastWeight.weight);
         }
 
 
-
+        const averageWeightsYear = averageWeightPerMonths(this.state.weights);
+        const currentWeek = weightToCurrentWeekGraph(this.state.weights);
         return (
             <div className={classes.App}>
                 <div className={classes.ToolBar}>
@@ -72,6 +76,10 @@ class App extends Component {
                         todayWeightDiff={todayWeightDiff}
                         startWeight={85}
                         goalWeight={75}
+                        yearAvg={averageWeightsYear.avgWeights}
+                        yearNbrDays={averageWeightsYear.nbrDays}
+                        yearNbrValues={averageWeightsYear.nbrValues}
+                        currentWeekWeights={currentWeek}
                     />
                 </div>
             </div>

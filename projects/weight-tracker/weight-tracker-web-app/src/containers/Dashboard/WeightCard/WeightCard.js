@@ -15,15 +15,34 @@ const WeightCard = props => {
             title = `${title.getDate()} / ${`0${title.getMonth() + 1}`.slice(-2)} / ${title.getFullYear()}`;
         }
     }
+
+    let weight;
+    let percentageBar;
+
+    if (props.weightDiff) {
+        weight = <p className={classes.WeightCardWeight}>
+            {props.weight}kg
+                        <span className={`${classes.WeightCardWeightDiff} ${props.isPositive ? classes.Up : classes.Down}`}>
+                {props.loss ? '-' : '+'}{props.weightDiff}kg
+                        </span>
+        </p>;
+        percentageBar = <div className={classes.PercentageBarContainer}>
+            <div className={classes.PercentageBar} style={{ height: `${props.percentage}%` }}></div>
+        </div>;
+    } else {
+        weight = <p>No Weight Recorded</p>;
+        percentageBar = null;
+    }
+
+
+
     return (
         <div className={classes.WeightCard}>
             <h1 className={classes.WeightCardTitle}>{title}</h1>
             <div className={classes.WeightCardBody}>
-                <div className={classes.PercentageBarContainer}>
-                    <div className={classes.PercentageBar} style={{ height: `${props.percentage}%` }}></div>
-                </div>
+                {percentageBar}
                 <div className={classes.WeightCardContent}>
-                    <p className={classes.WeightCardWeight}>{props.weight}kg<span className={`${classes.WeightCardWeightDiff} ${props.isPositive ? classes.Up : classes.Down}`}>{props.loss ? '-' : '+'}{props.weightDiff}kg</span></p>
+                    {weight}
                 </div>
             </div>
             <div className={classes.HelpSection}>
