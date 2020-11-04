@@ -1,4 +1,4 @@
-.LoginGroup {
+.Group {
     width: 50%;
     font-size: 1.3rem;
     display: flex;
@@ -6,7 +6,7 @@
     margin: 2rem;
 }
 
-.LoginBtn {
+.Btn {
     align-self: center;
     width: 30%;
     padding: 0.8rem;
@@ -17,15 +17,7 @@
     transition: 300ms;
 }
 
-.LoginBtn:hover {
+.Btn:hover {
     background: var(--primary);
     color: var(--on-primary);
-}
-
-.Title {
-    margin: 2rem;
-}
-
-.Title h1 {
-    border-bottom: 2px solid var(--primary);
 }

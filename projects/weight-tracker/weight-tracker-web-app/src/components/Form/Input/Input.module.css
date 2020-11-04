@@ -1,0 +1,26 @@
+.Group {
+    width: 50%;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+}
+
+.Label {
+    margin-bottom: 1rem;
+}
+
+.Input {
+    font-size: 1.2rem;
+    color: var(--primary);
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    outline: transparent;
+    border-bottom: 1px solid var(--primary);
+}
+
+.Input:focus,
+.Input:active {
+    border-width: 2px;
+}

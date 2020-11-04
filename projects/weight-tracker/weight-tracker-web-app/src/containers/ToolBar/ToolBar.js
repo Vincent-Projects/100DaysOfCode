@@ -21,7 +21,9 @@ const ToolBar = props => {
                             </ul>
                         </nav>
                         <div>
-                            <button onClick={context.logout}>logout</button>
+                            {context.isAuth ?
+                                <button onClick={context.logout}>logout</button>
+                                : null}
                             <p className={classes.Help}>? help</p>
                             <p className={classes.VersionText}>v1.0.0</p>
                         </div>

@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
-import { Route, Redirect } from "react-router-dom";
+import { Route } from "react-router-dom";
 import classes from './App.module.css';
 import ToolBar from "./ToolBar/ToolBar";
 import Dashboard from "./Dashboard/Dashboard";
 import AuthContext from "../context/auth";
 import axios from "axios";
 import Login from "./Login/Login";
+import Signup from "./Signup/Signup";
+import WeightManager from "./WeightManager/WeightManager";
 
 class App extends Component {
 
@@ -44,6 +46,23 @@ class App extends Component {
         });
     }
 
+    signup = (username, email, password, confirmPassword) => {
+        axios.post('https://weightrack.herokuapp.com/v1/users/signup', {
+            username: username,
+            email: email,
+            password: password,
+            confirmPassword: confirmPassword
+        }, {
+            headers: {
+                "Content-Type": "application/json"
+            }
+        }).then(response => {
+            if (response.status === 200 && response.data.success) {
+                // Add a redirect to login
+            }
+        });
+    }
+
     componentDidMount() {
 
         const token = localStorage.getItem("authToken");
@@ -66,7 +85,8 @@ class App extends Component {
             <AuthContext.Provider value={{
                 isAuth: this.state.isAuth,
                 login: this.login,
-                logout: this.logout
+                logout: this.logout,
+                signup: this.signup
             }}>
                 <div className={classes.App}>
                     <ToolBar />
@@ -79,7 +99,7 @@ class App extends Component {
                         <Route
                             exact
                             path="/signup"
-                            component={() => <p>Signup</p>}
+                            component={Signup}
                         />
                         <Route
                             exact
@@ -88,7 +108,7 @@ class App extends Component {
                         />
                         <Route
                             path="/weight-manager"
-                            render={() => <h1>Weight Manager</h1>}
+                            component={WeightManager}
                         />
                     </div>
                 </div>
