@@ -1,36 +1,34 @@
 import React from "react";
 import classes from "./ToolBar.module.css";
-import { Link, NavLink } from "react-router-dom";
 
-import { ReactComponent as HomeLogo } from "../../assets/icons/home-solid.svg";
-import { ReactComponent as WeightManagerLogo } from "../../assets/icons/weight-solid.svg";
-import { ReactComponent as WorkoutManagerLogo } from "../../assets/icons/dumbbell-solid.svg";
-import { ReactComponent as AccountLogo } from "../../assets/icons/user-solid.svg";
+import AuthContext from "../../context/auth";
+import LoggedToolBar from "./LoggedToolBar/LoggedToolBar";
+import AuthToolBar from "./AuthToolBar/AuthToolBar.js";
 
 const ToolBar = props => {
     return (
-        <div className={classes.ToolBar}>
-            <nav>
-                <ul>
-                    <li className={classes.LinkItem}>
-                        <NavLink activeClassName={classes.Active} className={classes.Link} exact to="/">
-                            <HomeLogo className={classes.Svg} /><p>Home</p>
-                        </NavLink>
-                    </li>
-                    <li className={classes.LinkItem}>
-                        <NavLink activeClassName={classes.Active} className={classes.Link} to="/weight-manager">
-                            <WeightManagerLogo className={classes.Svg} /><p>Weight Manager</p>
-                        </NavLink>
-                    </li>
-                    <li className={classes.LinkItem}>
-                        <Link className={classes.Link} to="/"><WorkoutManagerLogo className={classes.Svg} /><p>Workout</p></Link>
-                    </li>
-                    <li className={classes.LinkItem}>
-                        <Link className={classes.Link} to="/"><AccountLogo className={classes.Svg} /><p>Account</p></Link>
-                    </li>
-                </ul>
-            </nav>
-        </div >
+        <AuthContext.Consumer>
+            {context => {
+                return (
+                    <div className={classes.ToolBar}>
+                        <div>
+                            <h1 className={classes.ToolBarTitle}>WeighTrack</h1>
+                        </div>
+                        <nav>
+                            <ul>
+                                {context.isAuth ? <LoggedToolBar /> : <AuthToolBar />}
+
+                            </ul>
+                        </nav>
+                        <div>
+                            <button onClick={context.logout}>logout</button>
+                            <p className={classes.Help}>? help</p>
+                            <p className={classes.VersionText}>v1.0.0</p>
+                        </div>
+                    </div >
+                );
+            }}
+        </AuthContext.Consumer>
     )
 }
 

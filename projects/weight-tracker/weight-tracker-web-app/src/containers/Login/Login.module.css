@@ -1,0 +1,51 @@
+.LoginFormContainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.LoginGroup {
+    width: 50%;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: column;
+    margin: 2rem;
+}
+
+.LoginLabel {
+    margin-bottom: 1rem;
+}
+
+.LoginInput {
+    font-size: 1.2rem;
+    color: var(--primary);
+    padding: 1rem;
+    border: none;
+    background: transparent;
+    outline: transparent;
+    border-bottom: 1px solid var(--primary);
+}
+
+.LoginInput:focus,
+.LoginInput:active {
+    border-width: 2px;
+}
+
+.LoginBtn {
+    align-self: center;
+    width: 30%;
+    padding: 0.8rem;
+    background: transparent;
+    border: 2px solid var(--primary);
+    color: var(--primary);
+    font-size: 1.2rem;
+    transition: 300ms;
+}
+
+.LoginBtn:hover {
+    background: var(--primary);
+    color: var(--on-primary);
+}

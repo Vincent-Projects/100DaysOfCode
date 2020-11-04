@@ -2,8 +2,9 @@
     width: 100%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     background-color: var(--primary);
     color: var(--on-primary);
     position: fixed;
@@ -129,6 +130,27 @@
 
 .Active .Svg {
     color: var(--primary);
+}
+
+.ToolBarTitle {
+    margin: 2rem;
+    width: calc(100% - 4rem);
+    text-align: center;
+}
+
+.Help {
+    margin: 1rem;
+    width: calc(100% - 2rem);
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.VersionText {
+    color: rgb(160, 160, 160);
+    margin: 0.5rem;
+    font-size: 0.9rem;
+    width: calc(100% - 1rem);
+    text-align: center;
 }
 
 @media only screen and (min-width: 786px) {
