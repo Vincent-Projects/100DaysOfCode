@@ -67,10 +67,12 @@ class Dashboard extends React.Component {
                 todayWeight = this.state.weights[weightsLenght - 1];
             }
 
-            if (todayWeight) {
+            if (todayWeight && lastWeight) {
                 todayWeightDiff = weightsDiff(todayWeight.weight, lastWeight.weight);
             }
-            lastWeightDiff = weightsDiff(weightBeforeLast.weight, lastWeight.weight);
+            if (lastWeight) {
+                lastWeightDiff = weightsDiff(weightBeforeLast.weight, lastWeight.weight);
+            }
         }
 
 

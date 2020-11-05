@@ -45,6 +45,7 @@ export const averageWeightPerMonths = (weights) => {
 
 export const weightToCurrentWeekGraph = (weights) => {
     const currentWeekWeights = [];
+
     const currentDate = new Date();
     const currentDay = currentDate.getDay();
     const currentMonth = currentDate.getMonth();
@@ -59,11 +60,19 @@ export const weightToCurrentWeekGraph = (weights) => {
 
     for (let i = 0; i < 7; i++) {
         if (weights.length > 0) {
+            let added = false;
             if (currentDay > i) {
                 for (let j = 0; j < filtered.length; j++) {
-                    if (new Date(filtered[j].date).getDay() === currentDay - i) {
+                    if (new Date(filtered[j].date).getDate() === beginWeekDate.getDate() + (i + 1)) {
+                        added = true;
                         currentWeekWeights.push(filtered[j].weight);
+                        break;
                     }
+                }
+                if (added) {
+                    added = false;
+                } else {
+                    currentWeekWeights.push(null);
                 }
             } else {
                 currentWeekWeights.push(null);
