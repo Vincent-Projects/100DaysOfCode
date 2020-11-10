@@ -1,16 +1,23 @@
-import classes from './Dashboard.module.css';
 import React from 'react';
+import { Redirect } from 'react-router-dom';
+import axios from 'axios';
+
+import {
+    weightsDiff,
+    averageWeightPerMonths,
+    weightToCurrentWeekGraph,
+    weightPercentage,
+    computeLastWeightComponent,
+    todayRecordedWeight
+} from '../../utils/weight/compareWeight';
 import { isToday } from "../../utils/date/compareDate";
-import { weightsDiff, averageWeightPerMonths, weightToCurrentWeekGraph, weightPercentage } from '../../utils/weight/compareWeight';
 
 import Graph from '../Graph/Graph';
-
 import Grid, { Line, InLineGrid, Square } from "../Grid";
-import axios from 'axios';
 import WeightCard from "./WeightCard/WeightCard";
 
 import AuthContext from "../../context/auth";
-import { Redirect } from 'react-router-dom';
+import classes from './Dashboard.module.css';
 
 class Dashboard extends React.Component {
     _isMounted = false;
@@ -36,8 +43,18 @@ class Dashboard extends React.Component {
             })
                 .then(response => {
                     if (response.status === 200 && response.data.success && this._isMounted) {
+                        let sortedWeights = response.data.weights;
+
+                        /*if (Array.isArray(response.data.weights)) {
+                            sortedWeights.sort((a, b) => {
+                                if (new Date(a.date) > new Date(b.date)) {
+                                    
+                                }
+                            })
+                        }*/
+
                         this.setState({
-                            weights: response.data.weights
+                            weights: sortedWeights
                         });
                     }
                 })
@@ -51,7 +68,44 @@ class Dashboard extends React.Component {
 
 
     render() {
-        const weightsLenght = this.state.weights.length;
+        const averageWeightsYear = averageWeightPerMonths(this.state.weights);
+        const currentWeek = weightToCurrentWeekGraph(this.state.weights);
+        const lastWeight = computeLastWeightComponent(this.state.weights, 75, 90); // 75 : goal, 90 : start
+
+        const lastWeightComponent = (
+            lastWeight
+                ? <WeightCard
+                    title={lastWeight.title}
+                    weight={lastWeight.weight}
+                    weightDiff={lastWeight.weightDiff}
+                    percentage={lastWeight.percentage}
+                    isPositive={lastWeight.isPositive}
+                    loss={lastWeight.loss}
+                    helpTitle="Last Weight Recorded"
+                    helpContent="We compute the last weight recorded by searching for the last weight that you kept track of that is not today."
+                />
+                : <p className={classes.Centered}>No Weight Recorded Yet</p>
+        );
+
+        const todayWeight = todayRecordedWeight(this.state.weights);
+
+        const todayWeightComponent = (
+            todayWeight
+                ? <WeightCard
+                    title={null}
+                    weight={null}
+                    weightDiff={null}
+                    percentage={null}
+                    isPositive={true}
+                    loss={true}
+                    helpTitle="Today Weight Record"
+                    helpContent='This is the weight you recorded today. If you did not record any weight today then you see the message "No Weight Recorded"'
+                />
+                : <p className={classes.Centered}>No Weight Recorded Yet</p>
+        );
+
+
+        /*const weightsLenght = this.state.weights.length;
         let weightBeforeLast;
         let lastWeight;
         let todayWeight;
@@ -59,25 +113,30 @@ class Dashboard extends React.Component {
         let todayWeightDiff;
 
         if (weightsLenght > 0) {
-            weightBeforeLast = this.state.weights[weightsLenght - 2];
             lastWeight = this.state.weights[weightsLenght - 1];
+            weightBeforeLast = weightsLenght > 2 ? this.state.weights[weightsLenght - 2] : lastWeight;
+
             if (isToday(lastWeight.date)) {
-                weightBeforeLast = this.state.weights[weightsLenght - 3];
+                weightBeforeLast = weightsLenght > 3 ? this.state.weights[weightsLenght - 3] : lastWeight;
                 lastWeight = this.state.weights[weightsLenght - 2];
                 todayWeight = this.state.weights[weightsLenght - 1];
             }
 
             if (todayWeight && lastWeight) {
                 todayWeightDiff = weightsDiff(todayWeight.weight, lastWeight.weight);
+            } else {
+                todayWeightDiff = null;
             }
+
+
+
+
             if (lastWeight) {
                 lastWeightDiff = weightsDiff(weightBeforeLast.weight, lastWeight.weight);
+            } else {
+                lastWeightDiff = weightsDiff(0, 0);
             }
         }
-
-
-        const averageWeightsYear = averageWeightPerMonths(this.state.weights);
-        const currentWeek = weightToCurrentWeekGraph(this.state.weights);
 
         const goalWeight = 74;
         const startWeight = 90;
@@ -90,7 +149,7 @@ class Dashboard extends React.Component {
 
         if (todayWeight) {
             todayWeightPercent = weightPercentage(goalWeight, startWeight, todayWeight.weight);
-        }
+        }*/
 
         return (
             <AuthContext.Consumer>
@@ -113,31 +172,13 @@ class Dashboard extends React.Component {
                                 <Line lineLevel="Two">
                                     <InLineGrid>
                                         <Square rowLevel="One">
-                                            <WeightCard
-                                                title={lastWeight ? lastWeight.date : null}
-                                                weight={lastWeight ? lastWeight.weight : "no weight recorded"}
-                                                weightDiff={lastWeightDiff}
-                                                percentage={lastWeightPercent}
-                                                isPositive={true}
-                                                loss={true}
-                                                helpTitle="Last Weight Recorded"
-                                                helpContent="We compute the last weight recorded by searching for the last weight that you kept track of that is not today."
-                                            />
+                                            {lastWeightComponent}
                                         </Square>
                                         <Square rowLevel="Two">
-                                            <WeightCard
-                                                title={new Date()}
-                                                weight={todayWeight ? todayWeight.weight : "no weight recorded"}
-                                                weightDiff={todayWeightDiff}
-                                                percentage={todayWeightPercent}
-                                                isPositive={false}
-                                                loss={false}
-                                                helpTitle="Today Weight Record"
-                                                helpContent='This is the weight you recorded today. If you did not record any weight today then you see the message "No Weight Recorded"'
-                                            />
+                                            {todayWeightComponent}
                                         </Square>
                                         <Square rowLevel="Three">
-                                            <div className={classes.GoalContainer}>
+                                            {/*<div className={classes.GoalContainer}>
                                                 <h1 className={classes.GoalTitle}>Start / Goal</h1>
                                                 <div className={classes.GoalBody}>
                                                     <p className={classes.Goal}>Start : {startWeight} / Goal : {goalWeight}</p>
@@ -147,7 +188,7 @@ class Dashboard extends React.Component {
                                 </p>
                                                     </div>
                                                 </div>
-                                            </div>
+                                        </div>*/}
                                         </Square>
                                     </InLineGrid>
                                 </Line>

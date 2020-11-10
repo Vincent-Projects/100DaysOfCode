@@ -13,7 +13,9 @@ export const isYesterday = (date) => {
     const today = new Date();
     const compareDate = new Date(date);
 
-    if (Math.round((((today - compareDate) / 1000) / 3600) / 24) === 1) {
+    if (today.getFullYear() === compareDate.getFullYear()
+        && today.getMonth() === compareDate.getMonth()
+        && today.getDate() - 1 === compareDate.getDate()) {
         return true;
     }
 

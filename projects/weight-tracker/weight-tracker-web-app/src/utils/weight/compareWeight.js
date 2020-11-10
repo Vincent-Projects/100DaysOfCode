@@ -1,3 +1,5 @@
+import { isToday, isYesterday } from "../date/compareDate";
+
 export const weightsDiff = (weight1, weight2) => {
     return Math.round(Math.abs(weight1 - weight2) * 100) / 100;
 }
@@ -83,4 +85,60 @@ export const weightToCurrentWeekGraph = (weights) => {
     }
 
     return currentWeekWeights;
+}
+
+export const computeLastWeightComponent = (weights, goal, start) => {
+    let weightsLength;
+    if (Array.isArray(weights)) {
+        weightsLength = weights.length;
+
+        if (weightsLength > 0) {
+            let weightComponentInfo;
+            let index;
+            let yesterday = false;
+
+            if (isYesterday(weights[0].date)) {
+                index = 0;
+                yesterday = true;
+            } else if (isToday(weights[0].date)) {
+                if (weightsLength > 1 && isYesterday(weights[1].date)) {
+                    index = 1;
+                    yesterday = true;
+                } else {
+                    console.log(weightsLength, isYesterday(weights[1].date))
+                    index = 1;
+                }
+            } else {
+                return null;
+            }
+
+            let date = yesterday ? null : new Date(weights[index].date);
+            let title = date ? `${date.getDate()} / ${`0${date.getMonth() + 1}`.slice(-2)} / ${date.getFullYear()}` : null;
+
+            let weightDiff = 0;
+            let weightBeforeLast = weights[index].weight;
+
+            if (weightsLength > index + 1) {
+                weightBeforeLast = weights[index + 1].weight;
+                weightDiff = weightsDiff(weights[index].weight, weightBeforeLast);
+            }
+
+            weightComponentInfo = {
+                title: yesterday ? "Yesterday" : title,
+                weight: weights[index].weight,
+                weightDiff: weightDiff,
+                percentage: weightPercentage(goal, start, weights[index].weight),
+                isPositive: "", // HERE COMPUTE THE POSITIVE BASED ON GOAL 
+                loss: "" // HERE COMPUTE THE LOSS BASED ON GOAL
+            };
+
+            return weightComponentInfo;
+        }
+    }
+
+    return null;
+}
+
+export const todayRecordedWeight = weights => {
+    return null;
 }

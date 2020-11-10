@@ -171,7 +171,7 @@ class WeightManager extends React.Component {
             if (this._typingNbr === 0 && !this._isTyping) {
                 const token = localStorage.getItem("authToken");
 
-                axios.post("https://weightrack.herokuapp.com/v1/weight/start/add", {
+                axios.post("http://localhost:8080/weights/today/add", {
                     weight: this.state.todayWeight
                 }, {
                     headers: {
@@ -180,12 +180,12 @@ class WeightManager extends React.Component {
                     }
                 }).then(response => {
                     if (response.status === 200 && response.data.success) {
-                        console.log("Success");
+                        alert("Success");
                     } else {
-                        console.log("Fail");
+                        alert("Fail");
                     }
                 }).catch(err => {
-                    console.log("Error");
+                    alert("Error");
                 })
             }
         }, 3000);
@@ -204,6 +204,7 @@ class WeightManager extends React.Component {
                                     <InLineGrid>
                                         <Square rowLevel="One">
                                             <NumberInput
+                                                title="Start Weight"
                                                 handleIncrement={this.handleStartAddWeight}
                                                 value={this.state.startWeight}
                                                 handleInputChange={this.handleStartWeightChange}
@@ -211,6 +212,7 @@ class WeightManager extends React.Component {
                                         </Square>
                                         <Square rowLevel="Two">
                                             <NumberInput
+                                                title="Today's Weight"
                                                 handleIncrement={this.handleAddWeight}
                                                 value={this.state.todayWeight}
                                                 handleInputChange={this.handleTodayWeightChange}

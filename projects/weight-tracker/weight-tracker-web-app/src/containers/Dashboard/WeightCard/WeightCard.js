@@ -4,22 +4,11 @@ import { isToday, isYesterday } from "../../../utils/date/compareDate";
 import classes from "./WeightCard.module.css";
 
 const WeightCard = props => {
-    let title;
-    if (props.title) {
-        if (isYesterday(props.title)) {
-            title = "Yesterday";
-        } else if (isToday(props.title)) {
-            title = "Today";
-        } else {
-            title = new Date(props.title);
-            title = `${title.getDate()} / ${`0${title.getMonth() + 1}`.slice(-2)} / ${title.getFullYear()}`;
-        }
-    }
-
+    /*
     let weight;
     let percentageBar;
 
-    if (props.weightDiff) {
+    if (props.weightDiff != null || props.weightDiff != undefined) {
         weight = <p className={classes.WeightCardWeight}>
             {props.weight}kg
                         <span className={`${classes.WeightCardWeightDiff} ${props.isPositive ? classes.Up : classes.Down}`}>
@@ -32,17 +21,17 @@ const WeightCard = props => {
     } else {
         weight = <p>No Weight Recorded</p>;
         percentageBar = null;
-    }
-
-
+    }*/
 
     return (
         <div className={classes.WeightCard}>
-            <h1 className={classes.WeightCardTitle}>{title}</h1>
+            <h1 className={classes.WeightCardTitle}>{props.title}</h1>
             <div className={classes.WeightCardBody}>
-                {percentageBar}
+                {/*percentageBar*/}
                 <div className={classes.WeightCardContent}>
-                    {weight}
+                    <p className={classes.WeightCardWeight}>
+                        {props.weight}kg {/* HERE THE SPAN WITH WEIGHT DIFF*/}
+                    </p>
                 </div>
             </div>
             <div className={classes.HelpSection}>
@@ -52,7 +41,7 @@ const WeightCard = props => {
                     <p>{props.helpContent}</p>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

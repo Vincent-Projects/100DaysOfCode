@@ -3,6 +3,7 @@ import classes from "./Signup.module.css";
 import AuthContext from "../../context/auth";
 import { Redirect } from "react-router-dom";
 import Form, { Input, Title } from "../../components/Form";
+import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 
 class Signup extends React.Component {
     constructor(props) {
@@ -16,6 +17,7 @@ class Signup extends React.Component {
             passwordFormError: null,
             usernameFormError: null,
             confirmFormError: null,
+            isLoading: false
         }
     }
 
@@ -48,6 +50,9 @@ class Signup extends React.Component {
 
         const lowercaseEmail = this.state.emailForm.toLowerCase();
         signup(this.state.usernameForm, lowercaseEmail, this.state.passwordForm, this.state.confirmForm);
+        this.setState({
+            isLoading: true
+        });
     }
 
     render() {
@@ -56,6 +61,8 @@ class Signup extends React.Component {
                 {context => {
                     if (context.isAuth) {
                         return <Redirect to="/" />
+                    } else if (this.state.isLoading) {
+                        return <LoadingSpiner />
                     } else {
                         return (
                             <Form>
