@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import {
     Route,
     Switch,
-    withRouter
+    withRouter,
 } from "react-router-dom";
 import axios from "axios";
 
@@ -94,7 +94,7 @@ class App extends Component {
                     isAuth: true,
                 });
             } else {
-                // This means than there is a token but it has expire. Then make a clear on the token here
+                this.logout();
             }
         }
     }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 
@@ -15,6 +15,7 @@ import { isToday } from "../../utils/date/compareDate";
 import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import WeightCard from "./WeightCard/WeightCard";
+import LoadingSpinner from "../../components/LoadingSpiner/LoadingSpiner";
 
 import AuthContext from "../../context/auth";
 import classes from './Dashboard.module.css';
@@ -26,6 +27,9 @@ class Dashboard extends React.Component {
         super(props);
         this.state = {
             weights: [],
+            start: null,
+            goal: null,
+            isLoading: false
         }
     }
 
@@ -33,31 +37,52 @@ class Dashboard extends React.Component {
         this._isMounted = true;
 
         const token = localStorage.getItem("authToken");
+        const expireDate = localStorage.getItem("authTokenExpireDate");
 
-        if (token) {
-            axios.get("https://weightrack.herokuapp.com/v1/weights/year/2020", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => {
-                    if (response.status === 200 && response.data.success && this._isMounted) {
-                        let sortedWeights = response.data.weights;
+        if (token && expireDate) {
+            const expireDateFormat = new Date(expireDate);
+            const currentDate = new Date();
 
-                        /*if (Array.isArray(response.data.weights)) {
-                            sortedWeights.sort((a, b) => {
-                                if (new Date(a.date) > new Date(b.date)) {
-                                    
-                                }
-                            })
-                        }*/
-
-                        this.setState({
-                            weights: sortedWeights
-                        });
+            if (currentDate < expireDateFormat) {
+                this.setState({
+                    isLoading: true
+                });
+                axios.get("https://weightrack.herokuapp.com/v1/weights/year/2020", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
                     }
                 })
+                    .then(response => {
+                        if (response.status === 200 && response.data.success && this._isMounted) {
+                            let sortedWeights = response.data.weights;
+
+                            this.setState({
+                                weights: sortedWeights
+                            });
+                        }
+                    })
+                axios.get("http://localhost:8080/user/weight-info", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then(response => {
+                        if (response.status === 200 && response.data.success && this._isMounted) {
+                            const start = response.data.data.start !== -1 ? response.data.data.start : null;
+                            const goal = response.data.data.goal !== -1 ? response.data.data.goal : null;
+                            this.setState({
+                                start: start,
+                                goal: goal,
+                                isLoading: false
+                            });
+                        }
+                    })
+            } else {
+                // HERE I NEED TO CLEAR LOCALSTORAGE
+                // THEN SET ISAUTH TO FALSE IN APP.JS
+            }
         }
     }
 
@@ -70,7 +95,7 @@ class Dashboard extends React.Component {
     render() {
         const averageWeightsYear = averageWeightPerMonths(this.state.weights);
         const currentWeek = weightToCurrentWeekGraph(this.state.weights);
-        const lastWeight = computeLastWeightComponent(this.state.weights, 75, 90); // 75 : goal, 90 : start
+        const lastWeight = computeLastWeightComponent(this.state.weights, this.state.goal, this.state.start);
 
         const lastWeightComponent = (
             lastWeight
@@ -87,69 +112,46 @@ class Dashboard extends React.Component {
                 : <p className={classes.Centered}>No Weight Recorded Yet</p>
         );
 
-        const todayWeight = todayRecordedWeight(this.state.weights);
+        const todayWeight = todayRecordedWeight(this.state.weights, this.state.goal, this.state.start);
 
         const todayWeightComponent = (
             todayWeight
                 ? <WeightCard
-                    title={null}
-                    weight={null}
-                    weightDiff={null}
-                    percentage={null}
-                    isPositive={true}
-                    loss={true}
+                    title={todayWeight.title}
+                    weight={todayWeight.weight}
+                    weightDiff={todayWeight.weightDiff}
+                    percentage={todayWeight.percentage}
+                    isPositive={todayWeight.isPositive}
+                    loss={todayWeight.loss}
                     helpTitle="Today Weight Record"
                     helpContent='This is the weight you recorded today. If you did not record any weight today then you see the message "No Weight Recorded"'
                 />
                 : <p className={classes.Centered}>No Weight Recorded Yet</p>
         );
 
+        const isGoalSet = (this.state.start && this.state.goal ? true : false);
 
-        /*const weightsLenght = this.state.weights.length;
-        let weightBeforeLast;
-        let lastWeight;
-        let todayWeight;
-        let lastWeightDiff;
-        let todayWeightDiff;
+        const goalComponent = (
+            isGoalSet
+                ? (
+                    <div className={classes.GoalContainer}>
+                        <h1 className={classes.GoalTitle}>Start / Goal</h1>
+                        <div className={classes.GoalBody}>
+                            <p className={classes.Goal}>Start : {this.state.start} / Goal : {this.state.goal}</p>
+                            <div className={classes.GoalPercentageBarContainer}>
+                                <p className={classes.GoalPercentageBar} style={{ width: `${todayWeight ? todayWeight.percentage : (lastWeight ? lastWeight.percentage : 0)}%` }}>
+                                    {todayWeight ? todayWeight.percentage : (lastWeight ? lastWeight.percentage : 0)}%
+                </p>
+                            </div>
+                        </div>
+                    </div>
+                )
+                : <p className={classes.Centered}>No Goal Recorded yet</p>
+        );
 
-        if (weightsLenght > 0) {
-            lastWeight = this.state.weights[weightsLenght - 1];
-            weightBeforeLast = weightsLenght > 2 ? this.state.weights[weightsLenght - 2] : lastWeight;
-
-            if (isToday(lastWeight.date)) {
-                weightBeforeLast = weightsLenght > 3 ? this.state.weights[weightsLenght - 3] : lastWeight;
-                lastWeight = this.state.weights[weightsLenght - 2];
-                todayWeight = this.state.weights[weightsLenght - 1];
-            }
-
-            if (todayWeight && lastWeight) {
-                todayWeightDiff = weightsDiff(todayWeight.weight, lastWeight.weight);
-            } else {
-                todayWeightDiff = null;
-            }
-
-
-
-
-            if (lastWeight) {
-                lastWeightDiff = weightsDiff(weightBeforeLast.weight, lastWeight.weight);
-            } else {
-                lastWeightDiff = weightsDiff(0, 0);
-            }
+        if (this.state.isLoading) {
+            return <LoadingSpinner />
         }
-
-        const goalWeight = 74;
-        const startWeight = 90;
-        let lastWeightPercent;
-        let todayWeightPercent;
-
-        if (lastWeight) {
-            lastWeightPercent = weightPercentage(goalWeight, startWeight, lastWeight.weight);
-        }
-
-        if (todayWeight) {
-            todayWeightPercent = weightPercentage(goalWeight, startWeight, todayWeight.weight);
-        }*/
 
         return (
             <AuthContext.Consumer>
@@ -178,17 +180,7 @@ class Dashboard extends React.Component {
                                             {todayWeightComponent}
                                         </Square>
                                         <Square rowLevel="Three">
-                                            {/*<div className={classes.GoalContainer}>
-                                                <h1 className={classes.GoalTitle}>Start / Goal</h1>
-                                                <div className={classes.GoalBody}>
-                                                    <p className={classes.Goal}>Start : {startWeight} / Goal : {goalWeight}</p>
-                                                    <div className={classes.GoalPercentageBarContainer}>
-                                                        <p className={classes.GoalPercentageBar} style={{ width: `${todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%` }}>
-                                                            {todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%
-                                </p>
-                                                    </div>
-                                                </div>
-                                        </div>*/}
+                                            {goalComponent}
                                         </Square>
                                     </InLineGrid>
                                 </Line>

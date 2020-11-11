@@ -4,11 +4,21 @@ import { isToday, isYesterday } from "../../../utils/date/compareDate";
 import classes from "./WeightCard.module.css";
 
 const WeightCard = props => {
-    /*
-    let weight;
-    let percentageBar;
 
-    if (props.weightDiff != null || props.weightDiff != undefined) {
+    let percentageBar = props.percentage
+        ? (
+            <div className={classes.PercentageBarContainer}>
+                <div className={classes.PercentageBar} style={{ height: `${props.percentage <= 100 ? props.percentage : 100}%` }}></div>
+            </div>
+        ) : null;
+
+    let weightDiff = props.weightDiff ? (
+        <span className={`${classes.WeightCardWeightDiff} ${props.isPositive ? classes.Up : classes.Down}`}>
+            {props.loss ? '-' : '+'}{props.weightDiff}kg
+        </span>
+    ) : null;
+
+    /*if (props.weightDiff != null || props.weightDiff != undefined) {
         weight = <p className={classes.WeightCardWeight}>
             {props.weight}kg
                         <span className={`${classes.WeightCardWeightDiff} ${props.isPositive ? classes.Up : classes.Down}`}>
@@ -27,10 +37,10 @@ const WeightCard = props => {
         <div className={classes.WeightCard}>
             <h1 className={classes.WeightCardTitle}>{props.title}</h1>
             <div className={classes.WeightCardBody}>
-                {/*percentageBar*/}
+                {percentageBar}
                 <div className={classes.WeightCardContent}>
                     <p className={classes.WeightCardWeight}>
-                        {props.weight}kg {/* HERE THE SPAN WITH WEIGHT DIFF*/}
+                        {props.weight}kg {weightDiff}
                     </p>
                 </div>
             </div>

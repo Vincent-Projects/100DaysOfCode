@@ -24,3 +24,8 @@
 .Input:active {
     border-width: 2px;
 }
+
+.Info {
+    font-size: 0.8rem;
+    margin-left: 0.2rem;
+}

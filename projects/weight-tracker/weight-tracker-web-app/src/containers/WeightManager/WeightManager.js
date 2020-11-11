@@ -9,11 +9,13 @@ import {
     weightsDiff,
     averageWeightPerMonths,
     weightToCurrentWeekGraph,
-    weightPercentage
+    weightPercentage,
+    sortWeightPerDate
 } from '../../utils/weight/compareWeight';
 
 import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
+import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 
 import AuthContext from "../../context/auth";
 import NumberInput from "./NumberInput/NumberInput";
@@ -30,6 +32,12 @@ class WeightManager extends React.Component {
             weights: [],
             todayWeight: 0,
             startWeight: 0,
+            goalWeight: 0,
+            isLoading: false,
+            todayLoading: false,
+            startLoading: false,
+            goalLoading: false,
+            nbWeight: 0
         }
     }
 
@@ -37,40 +45,55 @@ class WeightManager extends React.Component {
         this._isMounted = true;
 
         const token = localStorage.getItem("authToken");
+        const expireDate = localStorage.getItem("authTokenExpireDate");
 
-        if (token) {
-            axios.get("https://weightrack.herokuapp.com/v1/weights/year/2020", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => {
-                    if (response.status === 200 && response.data.success && this._isMounted) {
-                        let todayWeight = 0;
-                        if (response.data.weights.length > 0 && isToday(response.data.weights[response.data.weights.length - 1].date)) {
-                            todayWeight = response.data.weights[response.data.weights.length - 1].weight;
+        if (token && expireDate) {
+            const expireDateFormat = new Date(expireDate);
+            const currentDate = new Date();
+
+            if (currentDate < expireDateFormat) {
+                this.setState({
+                    isLoading: true
+                });
+                axios.get("http://localhost:8080/weights/year/2020", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                })
+                    .then(response => {
+                        if (response.status === 200 && response.data.success && this._isMounted) {
+                            let todayWeight = 0;
+
+                            if (response.data.data.weights.length > 0) {
+                                const sortedWeight = sortWeightPerDate(response.data.data.weights);
+                                if (isToday(sortedWeight[0].date))
+                                    todayWeight = sortedWeight[0].weight;
+                            }
+                            this.setState({
+                                weights: response.data.data.weights,
+                                todayWeight: todayWeight
+                            });
                         }
-                        this.setState({
-                            weights: response.data.weights,
-                            todayWeight: todayWeight
-                        });
-                    }
-                })
+                    })
 
-            axios.get("https://weightrack.herokuapp.com/v1/weight/start", {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
-            })
-                .then(response => {
-                    if (response.status === 200 && response.data.success && this._isMounted) {
-                        this.setState({
-                            startWeight: response.data.start
-                        });
+                axios.get("http://localhost:8080/user/weight-info", {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
                     }
                 })
+                    .then(response => {
+                        if (response.status === 200 && response.data.success && this._isMounted) {
+                            this.setState({
+                                startWeight: response.data.data.start,
+                                goalWeight: response.data.data.goal,
+                                nbWeight: response.data.data.nb_weights,
+                                isLoading: false
+                            });
+                        }
+                    })
+            }
         }
     }
 
@@ -96,8 +119,13 @@ class WeightManager extends React.Component {
         setTimeout(() => {
             if (this._typingNbr === 0 && !this._isTyping) {
                 const token = localStorage.getItem("authToken");
+                // ADD TOKEN EXPIRE VERIFICATION HERE
 
-                axios.post("https://weightrack.herokuapp.com/v1/weight/add", {
+                this.setState({
+                    todayLoading: true,
+                });
+
+                axios.post("http://localhost:8080/weights/today/add", {
                     weight: this.state.todayWeight
                 }, {
                     headers: {
@@ -106,12 +134,20 @@ class WeightManager extends React.Component {
                     }
                 }).then(response => {
                     if (response.status === 200 && response.data.success) {
-                        console.log("Success");
+                        this.setState({
+                            todayLoading: false,
+                        });
                     } else {
-                        console.log("Fail");
+                        this.setState({
+                            todayLoading: false,
+                            // ADD VISUAL ERROR EFFECT
+                        });
                     }
                 }).catch(err => {
-                    console.log("Error");
+                    this.setState({
+                        todayLoading: false,
+                        // ADD VISUAL ERROR EFFECT
+                    });
                 })
             }
         }, 3000);
@@ -122,7 +158,7 @@ class WeightManager extends React.Component {
         this._typingNbr++;
         this.setState((prevState, props) => {
             return {
-                todayWeight: +prevState.todayWeight + +value
+                todayWeight: +prevState.todayWeight + +value,
             }
         });
 
@@ -171,21 +207,108 @@ class WeightManager extends React.Component {
             if (this._typingNbr === 0 && !this._isTyping) {
                 const token = localStorage.getItem("authToken");
 
-                axios.post("http://localhost:8080/weights/today/add", {
-                    weight: this.state.todayWeight
+                //ADD TOKEN EXPIRATION CHECK 
+
+                this.setState({
+                    startLoading: true,
+                });
+
+                axios.post("http://localhost:8080/user/weight-info/update", {
+                    start: this.state.startWeight,
+                    goal: this.state.goalWeight
                 }, {
                     headers: {
                         Authorization: `Bearer ${token}`,
                         "Content-Type": "application/json"
                     }
                 }).then(response => {
-                    if (response.status === 200 && response.data.success) {
-                        alert("Success");
+                    if (response.status === 201 && response.data.success) {
+                        this.setState({
+                            startLoading: false,
+                        });
                     } else {
-                        alert("Fail");
+                        this.setState({
+                            startLoading: false,
+                            // ADD ERROR VISUAL EFFECT
+                        });
                     }
                 }).catch(err => {
-                    alert("Error");
+                    this.setState({
+                        startLoading: false,
+                        // ADD ERROR VISUAL EFFECT
+                    });
+                })
+            }
+        }, 3000);
+    }
+
+    handleGoalWeightChange = (event) => {
+        this._isTyping = true;
+        this._typingNbr++;
+        this.setState({
+            goalWeight: event.target.value
+        })
+
+        setTimeout(() => {
+            this._typingNbr--;
+            this._isTyping = false;
+        }, 3000);
+
+        this.sendGoalWeight();
+    }
+
+    handleAddGoalWeight = value => {
+        this._isTyping = true;
+        this._typingNbr++;
+        this.setState((prevState, props) => {
+            return {
+                goalWeight: +prevState.goalWeight + +value
+            }
+        });
+
+        setTimeout(() => {
+            this._typingNbr--;
+            this._isTyping = false;
+        }, 3000);
+
+        this.sendGoalWeight();
+    }
+
+    sendGoalWeight = () => {
+        setTimeout(() => {
+            if (this._typingNbr === 0 && !this._isTyping) {
+                const token = localStorage.getItem("authToken");
+
+                //ADD TOKEN EXPIRATION CHECK 
+
+                this.setState({
+                    goalLoading: true,
+                });
+
+                axios.post("http://localhost:8080/user/weight-info/update", {
+                    start: this.state.startWeight,
+                    goal: this.state.goalWeight
+                }, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                        "Content-Type": "application/json"
+                    }
+                }).then(response => {
+                    if (response.status === 201 && response.data.success) {
+                        this.setState({
+                            goalLoading: false,
+                        });
+                    } else {
+                        this.setState({
+                            goalLoading: false,
+                            // ADD ERROR VISUAL EFFECT
+                        });
+                    }
+                }).catch(err => {
+                    this.setState({
+                        goalLoading: false,
+                        // ADD ERROR VISUAL EFFECT
+                    });
                 })
             }
         }, 3000);
@@ -193,7 +316,33 @@ class WeightManager extends React.Component {
 
 
     render() {
+        if (this.state.isLoading) {
+            return <LoadingSpiner />;
+        }
+
         const averageWeightsYear = averageWeightPerMonths(this.state.weights);
+
+        const todayWeightManager = this.state.todayLoading ? <LoadingSpiner /> : <NumberInput
+            title="Today's Weight"
+            handleIncrement={this.handleAddWeight}
+            value={this.state.todayWeight}
+            handleInputChange={this.handleTodayWeightChange}
+        />;
+
+        const startWeightManager = this.state.startLoading ? <LoadingSpiner /> : <NumberInput
+            title="Start Weight"
+            handleIncrement={this.handleAddStartWeight}
+            value={this.state.startWeight}
+            handleInputChange={this.handleStartWeightChange}
+        />
+
+        const goalWeightManager = this.state.goalLoading ? <LoadingSpiner /> : <NumberInput
+            title="Goal Weight"
+            handleIncrement={this.handleAddGoalWeight}
+            value={this.state.goalWeight}
+            handleInputChange={this.handleGoalWeightChange}
+        />
+
         return (
             <AuthContext.Consumer>
                 {context => {
@@ -203,33 +352,13 @@ class WeightManager extends React.Component {
                                 <Line lineLevel="One">
                                     <InLineGrid>
                                         <Square rowLevel="One">
-                                            <NumberInput
-                                                title="Start Weight"
-                                                handleIncrement={this.handleStartAddWeight}
-                                                value={this.state.startWeight}
-                                                handleInputChange={this.handleStartWeightChange}
-                                            />
+                                            {startWeightManager}
                                         </Square>
                                         <Square rowLevel="Two">
-                                            <NumberInput
-                                                title="Today's Weight"
-                                                handleIncrement={this.handleAddWeight}
-                                                value={this.state.todayWeight}
-                                                handleInputChange={this.handleTodayWeightChange}
-                                            />
+                                            {todayWeightManager}
                                         </Square>
                                         <Square rowLevel="Three">
-                                            <div className={classes.GoalContainer}>
-                                                {/*<h1 className={classes.GoalTitle}>Start / Goal</h1>
-                                                <div className={classes.GoalBody}>
-                                                    <p className={classes.Goal}>Start : {startWeight} / Goal : {goalWeight}</p>
-                                                    <div className={classes.GoalPercentageBarContainer}>
-                                                        <p className={classes.GoalPercentageBar} style={{ width: `${todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%` }}>
-                                                            {todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%
-                                </p>
-                                                    </div>
-                                                </div>*/}
-                                            </div>
+                                            {goalWeightManager}
                                         </Square>
                                     </InLineGrid>
                                 </Line>
@@ -248,15 +377,18 @@ class WeightManager extends React.Component {
 
                                 <Line lineLevel="Three">
                                     <InLineGrid>
-                                        <Square rowLevel="One">
+                                        {/*<Square rowLevel="One">
 
-                                        </Square>
+                                            </Square>*/}
                                         <Square rowLevel="Two">
-
+                                            <div className={classes.Container}>
+                                                <h2 className={classes.Title}>Total Weights Recorded</h2>
+                                                <p className={classes.Centered}>{this.state.nbWeight}</p>
+                                            </div>
                                         </Square>
-                                        <Square rowLevel="Three">
+                                        {/*<Square rowLevel="Three">
                                             <div className={classes.GoalContainer}>
-                                                {/*<h1 className={classes.GoalTitle}>Start / Goal</h1>
+                                                <h1 className={classes.GoalTitle}>Start / Goal</h1>
                                                 <div className={classes.GoalBody}>
                                                     <p className={classes.Goal}>Start : {startWeight} / Goal : {goalWeight}</p>
                                                     <div className={classes.GoalPercentageBarContainer}>
@@ -264,9 +396,9 @@ class WeightManager extends React.Component {
                                                             {todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%
                                 </p>
                                                     </div>
-                                                </div>*/}
+                                                </div>
                                             </div>
-                                        </Square>
+                                        </Square>*/}
                                     </InLineGrid>
                                 </Line>
                             </Grid>

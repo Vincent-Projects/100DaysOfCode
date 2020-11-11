@@ -79,6 +79,7 @@ class Login extends React.Component {
                                     type="password"
                                     value={this.state.passwordForm}
                                     handleChange={this.handlePasswordChange}
+                                    info="8 characters minimum"
                                 />
 
                                 <div className={classes.LoginGroup}>

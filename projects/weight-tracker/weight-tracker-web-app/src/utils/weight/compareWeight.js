@@ -5,6 +5,9 @@ export const weightsDiff = (weight1, weight2) => {
 }
 
 export const weightPercentage = (goal, start, current) => {
+    if (!goal || !start || !current) {
+        return null;
+    }
     return Math.round(100 - ((current - goal) * 100) / (start - goal));
 }
 
@@ -117,19 +120,26 @@ export const computeLastWeightComponent = (weights, goal, start) => {
 
             let weightDiff = 0;
             let weightBeforeLast = weights[index].weight;
+            let loss;
+            let positive;
 
             if (weightsLength > index + 1) {
                 weightBeforeLast = weights[index + 1].weight;
                 weightDiff = weightsDiff(weights[index].weight, weightBeforeLast);
+                loss = weights[index].weight < weights[index + 1].weight;
+                let diffBeforeLastWeight = weightsDiff(weights[index + 1].weight, goal);
+                let diffLastWeight = weightsDiff(weights[index].weight, goal);
+                positive = diffBeforeLastWeight > diffLastWeight;
             }
+
 
             weightComponentInfo = {
                 title: yesterday ? "Yesterday" : title,
                 weight: weights[index].weight,
                 weightDiff: weightDiff,
                 percentage: weightPercentage(goal, start, weights[index].weight),
-                isPositive: "", // HERE COMPUTE THE POSITIVE BASED ON GOAL 
-                loss: "" // HERE COMPUTE THE LOSS BASED ON GOAL
+                isPositive: positive,
+                loss: loss
             };
 
             return weightComponentInfo;
@@ -139,6 +149,61 @@ export const computeLastWeightComponent = (weights, goal, start) => {
     return null;
 }
 
-export const todayRecordedWeight = weights => {
+export const todayRecordedWeight = (weights, goal, start) => {
+    let weightsLength;
+    if (Array.isArray(weights)) {
+        weightsLength = weights.length;
+
+        weights = sortWeightPerDate(weights);
+
+        if (weightsLength > 0) {
+            let weightComponentInfo;
+            let index;
+            let today = false;
+
+            if (isToday(weights[0].date)) {
+                index = 0;
+                today = true;
+            } else {
+                return null;
+            }
+
+            let weightDiff = 0;
+            let weightBeforeLast = weights[index].weight;
+            let loss;
+            let positive;
+
+            if (weightsLength > index + 1) {
+                weightBeforeLast = weights[index + 1].weight;
+                weightDiff = weightsDiff(weights[index].weight, weightBeforeLast);
+                loss = weights[index].weight < weights[index + 1].weight;
+                let diffBeforeLastWeight = weightsDiff(weights[index + 1].weight, goal);
+                let diffLastWeight = weightsDiff(weights[index].weight, goal);
+                positive = diffBeforeLastWeight > diffLastWeight;
+            }
+
+            weightComponentInfo = {
+                title: today ? "Today" : null,
+                weight: weights[index].weight,
+                weightDiff: weightDiff,
+                percentage: weightPercentage(goal, start, weights[index].weight),
+                isPositive: positive,
+                loss: loss
+            };
+
+            return weightComponentInfo;
+        }
+    }
+
     return null;
+}
+
+export const sortWeightPerDate = (weights) => {
+    return weights.sort((a, b) => {
+        if (new Date(a.date) > new Date(b.date)) {
+            return -1;
+        } else {
+            return 1;
+        }
+    });
 }
