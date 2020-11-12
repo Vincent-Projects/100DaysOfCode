@@ -1,0 +1,15 @@
+.Container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.Title {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+}
+
+.Content {
+    font-size: 0.8rem;
+}

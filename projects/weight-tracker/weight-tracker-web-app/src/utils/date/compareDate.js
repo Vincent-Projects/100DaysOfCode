@@ -10,7 +10,7 @@ export const isToday = (date) => {
 }
 
 export const isYesterday = (date) => {
-    const today = new Date();
+    const today = new Date(Date.now());
     const compareDate = new Date(date);
 
     if (today.getFullYear() === compareDate.getFullYear()

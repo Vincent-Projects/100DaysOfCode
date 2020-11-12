@@ -8,7 +8,8 @@ import {
     weightToCurrentWeekGraph,
     weightPercentage,
     computeLastWeightComponent,
-    todayRecordedWeight
+    todayRecordedWeight,
+    sortWeightPerDate
 } from '../../utils/weight/compareWeight';
 import { isToday } from "../../utils/date/compareDate";
 
@@ -16,6 +17,7 @@ import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import WeightCard from "./WeightCard/WeightCard";
 import LoadingSpinner from "../../components/LoadingSpiner/LoadingSpiner";
+import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
 
 import AuthContext from "../../context/auth";
 import classes from './Dashboard.module.css';
@@ -55,7 +57,7 @@ class Dashboard extends React.Component {
                 })
                     .then(response => {
                         if (response.status === 200 && response.data.success && this._isMounted) {
-                            let sortedWeights = response.data.weights;
+                            let sortedWeights = sortWeightPerDate(response.data.weights);
 
                             this.setState({
                                 weights: sortedWeights
@@ -93,6 +95,10 @@ class Dashboard extends React.Component {
 
 
     render() {
+        if (this.state.isLoading) {
+            return <LoadingSpinner />
+        }
+
         const averageWeightsYear = averageWeightPerMonths(this.state.weights);
         const currentWeek = weightToCurrentWeekGraph(this.state.weights);
         const lastWeight = computeLastWeightComponent(this.state.weights, this.state.goal, this.state.start);
@@ -135,7 +141,7 @@ class Dashboard extends React.Component {
             isGoalSet
                 ? (
                     <div className={classes.GoalContainer}>
-                        <h1 className={classes.GoalTitle}>Start / Goal</h1>
+                        <h2 className={classes.GoalTitle}>Start / Goal</h2>
                         <div className={classes.GoalBody}>
                             <p className={classes.Goal}>Start : {this.state.start} / Goal : {this.state.goal}</p>
                             <div className={classes.GoalPercentageBarContainer}>
@@ -149,10 +155,7 @@ class Dashboard extends React.Component {
                 : <p className={classes.Centered}>No Goal Recorded yet</p>
         );
 
-        if (this.state.isLoading) {
-            return <LoadingSpinner />
-        }
-
+        // CREATE A WAY TO GENERATE TOOLTIP FOR GRAPH AUTOMATICALLY
         return (
             <AuthContext.Consumer>
                 {context => {
@@ -167,7 +170,16 @@ class Dashboard extends React.Component {
                                             data={averageWeightsYear.avgWeights}
                                             nbrValueMax={averageWeightsYear.nbrDays}
                                             nbrValue={averageWeightsYear.nbrValues}
-                                        />
+                                            hoverComponent={[null, null, null, null, null, null, null, null, null, null,
+                                                <MonthWeightInfo
+                                                    title="Weights info for November"
+                                                    content={<>
+                                                        <p style={{ marginBottom: "0.5rem" }}>Total weights recorded this month : 12</p>
+                                                        <p>Average weights this month : 77.45kg</p>
+                                                    </>}
+                                                />,
+                                                null]}
+                                        />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE */}
                                     </Square>
                                 </Line>
 

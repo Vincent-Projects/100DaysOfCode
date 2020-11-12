@@ -35,7 +35,7 @@ const WeightCard = props => {
 
     return (
         <div className={classes.WeightCard}>
-            <h1 className={classes.WeightCardTitle}>{props.title}</h1>
+            <h2 className={classes.WeightCardTitle}>{props.title}</h2>
             <div className={classes.WeightCardBody}>
                 {percentageBar}
                 <div className={classes.WeightCardContent}>

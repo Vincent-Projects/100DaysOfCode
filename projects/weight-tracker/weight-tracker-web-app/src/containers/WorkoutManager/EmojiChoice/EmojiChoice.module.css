@@ -1,0 +1,53 @@
+.EmojiContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.FeelingBtn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: fit-content;
+    cursor: pointer;
+}
+
+.FeelingBtn:hover {
+    transform: scale(1.1);
+}
+
+.Svg {
+    width: 3rem;
+    height: auto;
+    color: var(--primary);
+}
+
+.Disabled {
+    opacity: 0.3;
+}
+
+.Active {
+    transform: scale(1.1);
+}
+
+.FeelingBtn:nth-child(1) .Svg {
+    color: var(--feeling-happy);
+}
+
+.FeelingBtn:nth-child(2) .Svg {
+    color: var(--feeling-good);
+}
+
+.FeelingBtn:nth-child(3) .Svg {
+    color: var(--feeling-medium);
+}
+
+.FeelingBtn:nth-child(4) .Svg {
+    color: var(--feeling-sad);
+}
+
+.FeelingBtn:nth-child(5) .Svg {
+    color: var(--feeling-hard);
+}

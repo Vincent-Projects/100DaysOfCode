@@ -41,11 +41,14 @@ const Graph = props => {
             perc = 0;
         }
 
+        let hoverData = props.hoverComponent && props.hoverComponent[i] ? props.hoverComponent[i] : null;
+
         xValues.push({
             percentage: perc,
             value: props.xValues[i],
             nbrValue: nbrValue,
-            intensity: intensity
+            intensity: intensity,
+            hoverData: hoverData
         });
     }
 
@@ -57,13 +60,14 @@ const Graph = props => {
                 percentage={value.percentage}
                 nbrValue={value.nbrValue}
                 intensity={value.intensity}
+                hoverData={value.hoverData}
             />
         );
     });
     return (
         <div className={classes.GraphContainer}>
             <div className={classes.GraphTitle}>
-                <h1>{props.title}</h1>
+                <h2 className={classes.Title}>{props.title}</h2>
             </div>
             <div className={classes.GraphBody}>
                 <div className={classes.GraphYContainer}>
@@ -78,11 +82,22 @@ const Graph = props => {
 }
 
 const GraphValue = props => {
+    let hover = null;
+
+    if (props.hoverData && props.percentage > 0) {
+        hover = (
+            <div className={classes.HoverData}>
+                {props.hoverData}
+            </div>
+        );
+    }
     return (
         <div className={classes.GraphColumnValue}>
             <div>{props.title}</div>
             <div className={classes.GraphPercentageBarContainer}>
-                <div className={classes.GraphPercentageBar} style={{ height: `${props.percentage}%`, background: `rgba(26, 35, 126, ${props.intensity})` }}></div>
+                <div className={classes.GraphPercentageBar} style={{ height: `${props.percentage}%`, background: `rgba(26, 35, 126, ${props.intensity})` }}>
+                    {hover}
+                </div>
             </div>
         </div>
     )

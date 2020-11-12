@@ -108,7 +108,6 @@ export const computeLastWeightComponent = (weights, goal, start) => {
                     index = 1;
                     yesterday = true;
                 } else {
-                    console.log(weightsLength, isYesterday(weights[1].date))
                     index = 1;
                 }
             } else {
@@ -153,8 +152,6 @@ export const todayRecordedWeight = (weights, goal, start) => {
     let weightsLength;
     if (Array.isArray(weights)) {
         weightsLength = weights.length;
-
-        weights = sortWeightPerDate(weights);
 
         if (weightsLength > 0) {
             let weightComponentInfo;

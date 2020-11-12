@@ -5,7 +5,7 @@ const NumberInput = props => {
     return (
         <div className={classes.Container}>
             <div className={classes.TitleContainer}>
-                <h1>{props.title}</h1>
+                <h2 className={classes.Title}>{props.title}</h2>
             </div>
             <div className={classes.InputContainer}>
                 <button className={classes.Button} onClick={() => props.handleIncrement(-1)}>-</button>

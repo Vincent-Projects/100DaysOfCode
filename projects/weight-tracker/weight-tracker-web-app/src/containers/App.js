@@ -11,6 +11,8 @@ import AuthContext from "../context/auth";
 import ToolBar from "./ToolBar/ToolBar";
 import Dashboard from "./Dashboard/Dashboard";
 import WeightManager from "./WeightManager/WeightManager";
+import WorkoutManager from "./WorkoutManager/WorkoutManager";
+import Account from "./Account/Account";
 
 import Login from "./Login/Login";
 import Signup from "./Signup/Signup";
@@ -124,6 +126,14 @@ class App extends Component {
                             <Route
                                 path="/weight-manager"
                                 component={WeightManager}
+                            />
+                            <Route
+                                path="/workout-manager"
+                                component={WorkoutManager}
+                            />
+                            <Route
+                                path="/account"
+                                component={Account}
                             />
                             <Route
                                 path="/"

@@ -16,6 +16,7 @@ import {
 import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
+import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
 
 import AuthContext from "../../context/auth";
 import NumberInput from "./NumberInput/NumberInput";
@@ -371,7 +372,16 @@ class WeightManager extends React.Component {
                                             data={averageWeightsYear.avgWeights}
                                             nbrValueMax={averageWeightsYear.nbrDays}
                                             nbrValue={averageWeightsYear.nbrValues}
-                                        />
+                                            hoverComponent={[null, null, null, null, null, null, null, null, null, null,
+                                                <MonthWeightInfo
+                                                    title="Weights info for November"
+                                                    content={<>
+                                                        <p style={{ marginBottom: "0.5rem" }}>Total weights recorded this month : 12</p>
+                                                        <p>Average weights this month : 77.45kg</p>
+                                                    </>}
+                                                />,
+                                                null]}
+                                        />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE */}
                                     </Square>
                                 </Line>
 
