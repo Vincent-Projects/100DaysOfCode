@@ -81,6 +81,9 @@ class Dashboard extends React.Component {
                             });
                         }
                     })
+                    .catch(err => {
+                        console.log(err);
+                    })
             } else {
                 // HERE I NEED TO CLEAR LOCALSTORAGE
                 // THEN SET ISAUTH TO FALSE IN APP.JS

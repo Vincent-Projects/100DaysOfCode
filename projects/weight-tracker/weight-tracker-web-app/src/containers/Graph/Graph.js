@@ -12,6 +12,9 @@ const Graph = props => {
     if ((props.data.filter(val => val !== null)).length > 0) {
         xValueMax = Math.max(...props.data) + 2;
         xValueMin = Math.min(...props.data.filter(value => value ? value : undefined)) - 2;
+        if (xValueMin < 0) {
+            xValueMin = 0;
+        }
         step = Math.round((xValueMax - xValueMin) / NBR_STEP);
 
         for (let i = 0; i < NBR_STEP; i++) {
@@ -31,12 +34,14 @@ const Graph = props => {
         const nbrValueMax = props.nbrValueMax ? props.nbrValueMax[i] : 1;
         let intensity = nbrValue / nbrValueMax;
         const min_visibility = 0.2;
+
         if (intensity + min_visibility < 1 && intensity !== 0) {
             intensity += min_visibility;
         }
         let perc;
         if (props.data[i]) {
-            perc = weightPercentage(xValueMax, xValueMin, props.data[i])
+            /* perc = weightPercentage(xValueMax, xValueMin, props.data[i]) */
+            perc = Math.round((Math.abs(props.data[i] - xValueMin) / Math.abs(xValueMax - xValueMin)) * 100)
         } else {
             perc = 0;
         }

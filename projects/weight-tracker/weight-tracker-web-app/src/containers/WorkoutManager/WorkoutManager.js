@@ -1,5 +1,11 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
+import axios from "axios";
+
+import {
+    sortWorkoutsPerDate,
+    filterNumberWorkoutsPerMonth
+} from "../../utils/workouts/compareWorkout";
 
 import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
@@ -13,17 +19,125 @@ class WorkoutManager extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isLoading: false,
             todayFeeling: null,
+            todayDone: false,
+            workouts: [],
+            nbrWorkouts: 0,
         }
+    }
+
+    componentDidMount() {
+        const token = localStorage.getItem('authToken');
+        const expireDateToken = localStorage.getItem('authTokenExpireDate');
+
+        const currentDate = new Date(Date.now());
+
+        if (expireDateToken && new Date(expireDateToken) > currentDate) {
+            const config = {
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`
+                }
+            };
+            this.setState({
+                isLoading: true,
+            });
+            axios.get('http://localhost:8080/workout/today/info', config)
+                .then(response => {
+                    if (response.status === 200 && response.data.success) {
+                        this.setState({
+                            isLoading: false,
+                            todayDone: response.data.data.done,
+                            todayFeeling: response.data.data.feeling
+                        });
+                    } else if (response.status === 204) {
+                        this.setState({
+                            isLoading: false,
+                            todayDone: false,
+                            todayFeeling: null
+                        });
+                    } else {
+                        // HERE HANDLE ERROR
+                    }
+                }).catch(err => {
+                    console.log(err); // HERE HANDLE ERROR
+                })
+            axios.get('http://localhost:8080/workout/year/2020', config)
+                .then(response => {
+                    if (response.status === 200 && response.data.success) {
+                        this.setState({
+                            isLoading: false,
+                            workouts: sortWorkoutsPerDate(response.data.data.workouts)
+                        });
+                    } else {
+                        // HERE HANDLE ERROR
+                    }
+                }).catch(err => {
+                    console.log(err); // HERE HANDLE ERROR
+                })
+            axios.get('http://localhost:8080/user/workout-info', config)
+                .then(response => {
+                    if (response.status === 200 && response.data.success) {
+                        this.setState({
+                            isLoading: false,
+                            nbrWorkouts: response.data.data.nb_workouts
+                        });
+                    } else {
+                        // HERE HANDLE ERROR
+                    }
+                }).catch(err => {
+                    console.log(err); // HERE HANDLE ERROR
+                })
+        }
+    }
+
+    handleTodayDone = () => {
+        this.setState((prevState) => {
+            return {
+                todayDone: !prevState.todayDone,
+                nbrWorkouts: prevState.nbrWorkouts + 1
+            }
+        }, this.sendData);
+    }
+
+    sendData = () => {
+        const token = localStorage.getItem('authToken');
+
+        const data = {
+            done: this.state.todayDone,
+            feeling: this.state.todayFeeling
+        };
+
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`
+            }
+        };
+
+        axios.post("http://localhost:8080/workout/today/add", data, config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    alert(response.data.message);
+                } else {
+                    alert("Error"); // Remove the last change from state
+                }
+            })
+            .catch(err => {
+                console.log("ERROR OCCUR");
+                // Catch Error with Visual Effect
+            })
     }
 
     handleTodayFeelingChange = (feeling) => {
         this.setState({
             todayFeeling: feeling
-        })
+        }, this.sendData);
     }
 
     render() {
+        const filteredMonth = filterNumberWorkoutsPerMonth(this.state.workouts);
         return (
             <AuthContext.Consumer>
                 {context => {
@@ -35,9 +149,9 @@ class WorkoutManager extends Component {
                                         <Graph
                                             title="Number of Workouts per Month"
                                             xValues={["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}
-                                            data={[]}
-                                            nbrValueMax={[]}
-                                            nbrValue={[]}
+                                            data={filteredMonth.nbrWorkouts}
+                                            nbrValueMax={filteredMonth.nbrDaysPerMonth}
+                                            nbrValue={filteredMonth.nbrWorkouts}
                                         />
                                         {/*hoverComponent={[null, null, null, null, null, null, null, null, null, null,
                                                     <MonthWeightInfo
@@ -58,7 +172,7 @@ class WorkoutManager extends Component {
                                             <div className={classes.CardContainer}>
                                                 <h2 className={classes.CardTitle}>Today's Workout</h2>
                                                 <div className={classes.CardBody}>
-                                                    <input className={classes.CheckBox} type="checkbox" />
+                                                    <input className={classes.CheckBox} type="checkbox" checked={this.state.todayDone} onChange={this.handleTodayDone} />
                                                 </div>
                                             </div>
                                         </Square>
@@ -76,6 +190,9 @@ class WorkoutManager extends Component {
                                         <Square rowLevel="Three">
                                             <div className={classes.CardContainer}>
                                                 <h2 className={classes.CardTitle}>Total Workouts</h2>
+                                                <div className={classes.CardBody}>
+                                                    <p className={classes.WorkoutNumber}>{this.state.nbrWorkouts}</p>
+                                                </div>
                                             </div>
                                         </Square>
                                     </InLineGrid>
@@ -83,28 +200,7 @@ class WorkoutManager extends Component {
 
                                 <Line lineLevel="Three">
                                     <InLineGrid>
-                                        {/*<Square rowLevel="One">
 
-                                            </Square>
-                                        <Square rowLevel="Two">
-                                            <div className={classes.Container}>
-                                                <h2 className={classes.Title}>Total Weights Recorded</h2>
-                                                <p className={classes.Centered}>{this.state.nbWeight}</p>
-                                            </div>
-                                        </Square>
-                                        <Square rowLevel="Three">
-                                            <div className={classes.GoalContainer}>
-                                                <h1 className={classes.GoalTitle}>Start / Goal</h1>
-                                                <div className={classes.GoalBody}>
-                                                    <p className={classes.Goal}>Start : {startWeight} / Goal : {goalWeight}</p>
-                                                    <div className={classes.GoalPercentageBarContainer}>
-                                                        <p className={classes.GoalPercentageBar} style={{ width: `${todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%` }}>
-                                                            {todayWeightPercent ? todayWeightPercent : (lastWeightPercent ? lastWeightPercent : 0)}%
-                                </p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </Square>*/}
                                     </InLineGrid>
                                 </Line>
                             </Grid>

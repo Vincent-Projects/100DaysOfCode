@@ -1,0 +1,58 @@
+.AccountContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    height: 100%;
+}
+
+.CategoryContainer {
+    width: 40%;
+    min-height: 50%;
+    height: fit-content;
+    font-size: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+.OptionsContainer {
+    width: 60%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    border-left: 2px solid var(--primary);
+}
+
+.Category {
+    width: calc(100% - 5rem);
+    padding-left: 5rem;
+    text-decoration: none;
+    color: var(--primary);
+}
+
+.Category:hover {
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.Active {
+    position: relative;
+}
+
+.Active:after {
+    position: absolute;
+    content: "";
+    top: calc(50% - 5px);
+    right: 0;
+    width: 1px;
+    height: 1px;
+    background-color: transparent;
+    border-left: 10px solid transparent;
+    border-top: 10px solid transparent;
+    border-right: 10px solid var(--primary);
+    border-bottom: 10px solid transparent;
+}

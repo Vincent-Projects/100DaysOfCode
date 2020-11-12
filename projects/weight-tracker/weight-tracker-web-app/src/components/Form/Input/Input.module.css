@@ -6,8 +6,24 @@
     margin: 2rem;
 }
 
-.Label {
+.RowGroup {
+    width: 50%;
+    font-size: 1.3rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 2rem;
+}
+
+.Group .Label {
     margin-bottom: 1rem;
+    font-size: 1.4rem;
+}
+
+.RowGroup .Label {
+    margin-right: 1rem;
+    width: 30%;
+    font-size: 1.4rem;
 }
 
 .Input {

@@ -20,7 +20,6 @@ const EmojiChoice = props => {
     const class3 = props.todayFeeling !== null ? props.todayFeeling === 3 : -1;
     const class4 = props.todayFeeling !== null ? props.todayFeeling === 4 : -1;
 
-    console.log(class0);
     return (
         <div className={classes.EmojiContainer}>
             <div className={`${classes.FeelingBtn} ${class4 === -1 ? null : class4 ? classes.Active : classes.Disabled}`} onClick={() => handleClick(4)}>

@@ -24,7 +24,7 @@ const LoggedToolBar = props => {
             <NavLink activeClassName={classes.Active} className={classes.Link} to="/workout-manager"><WorkoutManagerLogo className={classes.Svg} /><p>Workout</p></NavLink>
         </li>
         <li className={classes.LinkItem}>
-            <NavLink activeClassName={classes.Active} className={classes.Link} exact to="/account"><AccountLogo className={classes.Svg} /><p>Account</p></NavLink>
+            <NavLink activeClassName={classes.Active} className={classes.Link} to="/account"><AccountLogo className={classes.Svg} /><p>Account</p></NavLink>
         </li>
     </>
 }
