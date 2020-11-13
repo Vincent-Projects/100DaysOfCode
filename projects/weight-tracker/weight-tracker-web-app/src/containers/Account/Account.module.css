@@ -56,3 +56,7 @@
     border-right: 10px solid var(--primary);
     border-bottom: 10px solid transparent;
 }
+
+.Logout {
+    color: var(--red);
+}

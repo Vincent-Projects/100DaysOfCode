@@ -21,7 +21,6 @@ const SelectBirthday = props => {
     nbrDays.setFullYear(props.selectedYear ? props.selectedYear : currentDate.getFullYear());
     nbrDays.setMonth(props.selectedMonth ? props.selectedMonth : currentDate.getMonth());
     nbrDays.setDate(0);
-    console.log("NBR DAY " + nbrDays.getDate());
 
     for (let i = 1; i <= nbrDays.getDate(); i++) {
         DAYS.push(i);
@@ -36,27 +35,27 @@ const SelectBirthday = props => {
     }
 
     const daysOptions = DAYS.map((value, index) => {
-        return <option key={index} selected={value === props.selectedDate}>{value}</option>
+        return <option key={index} value={value}>{value}</option>
     });
 
     const monthsOptions = MONTHS.map((value, index) => {
-        return <option key={index} selected={index + 1 === props.selectedMonth}>{value}</option>
+        return <option key={index} value={index + 1}>{value}</option>
     });
 
     const yearsOptions = YEARS.map((value, index) => {
-        return <option key={index} selected={value === props.selectedYear}>{value}</option>
+        return <option key={index} value={value}>{value}</option>
     });
 
     return (
         <div className={classes.Container}>
             <p className={classes.Title}>{props.title}</p>
-            <select onChange={event => props.handleDayChange(event.target.value)}>
+            <select onChange={event => props.handleDayChange(event.target.value)} defaultValue={DAYS[props.selectedDay - 1]}>
                 {daysOptions}
             </select>
-            <select onChange={event => props.handleMonthChange(event.target.selectedIndex + 1)}>
+            <select onChange={event => props.handleMonthChange(event.target.selectedIndex + 1)} defaultValue={props.selectedMonth}>
                 {monthsOptions}
             </select>
-            <select onChange={event => props.handleYearChange(event.target.value)}>
+            <select onChange={event => props.handleYearChange(event.target.value)} defaultValue={props.selectedYear}>
                 {yearsOptions}
             </select>
         </div>

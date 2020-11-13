@@ -36,6 +36,9 @@ class Account extends Component {
                                     <NavLink className={classes.Category} activeClassName={classes.Active} to={this.props.match.url + '/notifications'}>
                                         <p>Notifications</p>
                                     </NavLink>
+                                    <NavLink className={`${classes.Category} ${classes.Logout}`} onClick={context.logout} to={"/login"}>
+                                        <p>Log out</p>
+                                    </NavLink>
                                 </div>
                                 <div className={classes.OptionsContainer}>
                                     <Switch>

@@ -45,3 +45,8 @@
     font-size: 0.8rem;
     margin-left: 0.2rem;
 }
+
+.Error {
+    color: var(--red);
+    font-size: 1.1rem;
+}

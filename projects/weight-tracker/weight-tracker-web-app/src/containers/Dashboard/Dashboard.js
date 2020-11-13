@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { Redirect } from 'react-router-dom';
-import axios from 'axios';
+import api from "../../api";
 
 import {
     weightsDiff,
@@ -19,6 +19,7 @@ import WeightCard from "./WeightCard/WeightCard";
 import LoadingSpinner from "../../components/LoadingSpiner/LoadingSpiner";
 import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
 
+import isLogged from "../../hoc/isLogged";
 import AuthContext from "../../context/auth";
 import classes from './Dashboard.module.css';
 
@@ -38,57 +39,60 @@ class Dashboard extends React.Component {
     componentDidMount() {
         this._isMounted = true;
 
-        const token = localStorage.getItem("authToken");
-        const expireDate = localStorage.getItem("authTokenExpireDate");
-
-        if (token && expireDate) {
-            const expireDateFormat = new Date(expireDate);
-            const currentDate = new Date();
-
-            if (currentDate < expireDateFormat) {
-                this.setState({
-                    isLoading: true
-                });
-                axios.get("https://weightrack.herokuapp.com/v1/weights/year/2020", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then(response => {
-                        if (response.status === 200 && response.data.success && this._isMounted) {
-                            let sortedWeights = sortWeightPerDate(response.data.weights);
-
-                            this.setState({
-                                weights: sortedWeights
-                            });
-                        }
-                    })
-                axios.get("http://localhost:8080/user/weight-info", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then(response => {
-                        if (response.status === 200 && response.data.success && this._isMounted) {
-                            const start = response.data.data.start !== -1 ? response.data.data.start : null;
-                            const goal = response.data.data.goal !== -1 ? response.data.data.goal : null;
-                            this.setState({
-                                start: start,
-                                goal: goal,
-                                isLoading: false
-                            });
-                        }
-                    })
-                    .catch(err => {
-                        console.log(err);
-                    })
-            } else {
-                // HERE I NEED TO CLEAR LOCALSTORAGE
-                // THEN SET ISAUTH TO FALSE IN APP.JS
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
             }
-        }
+        };
+        const getYearWeightsUrl = "/weights/year/2020";
+        const getWeightsInfoUrl = "/user/weight-info";
+
+        this.setState({
+            isLoading: true
+        });
+
+        Promise.all([
+            api.get(getYearWeightsUrl, config),
+            api.get(getWeightsInfoUrl, config)
+        ])
+            .then(response => {
+                let weightsInfo;
+                let yearWeights;
+                let start;
+                let goal;
+
+                if (response[0].config.url === getYearWeightsUrl
+                    && response[0].status === 200
+                    && response[0].data.success) {
+                    weightsInfo = response[1].data.data;
+                    yearWeights = response[0].data.success ? response[0].data.data : null;
+                } else if (response[1].config.url === getYearWeightsUrl
+                    && response[1].status === 200
+                    && response[1].data.success) {
+                    weightsInfo = response[0].data.data;
+                    yearWeights = response[1].data.success ? response[1].data.data : null;
+                }
+
+                if (yearWeights) {
+                    yearWeights = sortWeightPerDate(yearWeights.weights);
+                }
+
+                if (weightsInfo) {
+                    start = weightsInfo.start !== -1 ? weightsInfo.start : null;
+                    goal = weightsInfo.goal !== -1 ? weightsInfo.goal : null;
+                }
+
+                this.setState({
+                    weights: yearWeights,
+                    start: start,
+                    goal: goal,
+                    isLoading: false
+                });
+            })
+            .catch(err => {
+                console.log(err);
+            });
+
     }
 
     componentWillUnmount() {
@@ -173,7 +177,10 @@ class Dashboard extends React.Component {
                                             data={averageWeightsYear.avgWeights}
                                             nbrValueMax={averageWeightsYear.nbrDays}
                                             nbrValue={averageWeightsYear.nbrValues}
-                                            hoverComponent={[null, null, null, null, null, null, null, null, null, null,
+
+                                        />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE 
+                                        
+                                        hoverComponent={[null, null, null, null, null, null, null, null, null, null,
                                                 <MonthWeightInfo
                                                     title="Weights info for November"
                                                     content={<>
@@ -182,7 +189,9 @@ class Dashboard extends React.Component {
                                                     </>}
                                                 />,
                                                 null]}
-                                        />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE */}
+                                        
+                                        
+                                        */}
                                     </Square>
                                 </Line>
 
@@ -220,5 +229,5 @@ class Dashboard extends React.Component {
     }
 }
 
-export default Dashboard;
+export default isLogged(Dashboard);
 

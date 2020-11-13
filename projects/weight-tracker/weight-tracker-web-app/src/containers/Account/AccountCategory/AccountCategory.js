@@ -4,7 +4,11 @@ import Form, { Input, Select } from '../../../components/Form';
 
 import SelectBirthday from "./SelectBirthday/SelectBirthday";
 
+import LoadingSpiner from "../../../components/LoadingSpiner/LoadingSpiner";
+import isLogged from "../../../hoc/isLogged";
+
 import classes from "./AccountCategory.module.css";
+import api from "../../../api";
 
 const LANGUAGES = ["EN", "FR"];
 
@@ -20,8 +24,55 @@ class AccountCategory extends React.Component {
             birthdayMonth: null,
             birthdayDate: null,
             language: "",
-            country: ""
+            country: "",
+            isLoading: false
         }
+    }
+
+    componentDidMount() {
+        this.setState({
+            isLoading: true,
+        });
+
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
+            }
+        };
+
+        api.get('/user/info', config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    const {
+                        username,
+                        email,
+                        gender,
+                        birthday,
+                        language,
+                        country
+                    } = response.data.data;
+
+                    let birthdayDate = null;
+
+                    if (birthday) {
+                        birthdayDate = new Date(birthday);
+                    }
+
+                    this.setState({
+                        username: username,
+                        email: email,
+                        gender: gender,
+                        birthdayDate: birthdayDate ? birthdayDate.getDate() - 1 : null,
+                        birthdayMonth: birthdayDate ? birthdayDate.getMonth() + 1 : null,
+                        birthdayYear: birthdayDate ? birthdayDate.getFullYear() : null,
+                        language: language,
+                        country: country,
+                        isLoading: false
+                    });
+                }
+            }).catch(err => {
+                console.log(err);
+            })
     }
 
     handleUsernameChange = (event) => {
@@ -68,10 +119,43 @@ class AccountCategory extends React.Component {
 
     handleSave = (event) => {
         event.preventDefault();
-        const date = new Date(this.state.birthdayYear, this.state.birthdayMonth - 1, this.state.birthdayDate);
+        const config = {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`
+            }
+        };
+
+        const date = new Date(this.state.birthdayYear, this.state.birthdayMonth, this.state.birthdayDate);
+
+        this.setState({
+            isLoading: true,
+        });
+
+        const data = {
+            username: this.state.username,
+            email: this.state.email,
+            gender: this.state.gender,
+            birthday: date,
+            language: this.state.language,
+            country: this.state.country
+        };
+
+        api.post('/user/info/update', data, config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    this.setState({
+                        isLoading: false
+                    });
+                }
+            }).catch(err => {
+                console.log(err);
+            });
     }
 
     render() {
+        if (this.state.isLoading) {
+            return <LoadingSpiner />
+        }
         return (
             <Form>
                 <Input
@@ -92,6 +176,7 @@ class AccountCategory extends React.Component {
                     title="Gender"
                     values={["Female", "Male"]}
                     handleChange={this.handleGenderChange}
+                    selectedValue={this.state.gender ? "Male" : "Female"}
                 />
                 <SelectBirthday
                     title="Birthday"
@@ -106,6 +191,7 @@ class AccountCategory extends React.Component {
                     title="Language"
                     values={LANGUAGES}
                     handleChange={this.handleLanguageChange}
+                    selectedValue={this.state.language}
                 />
                 <button onClick={this.handleSave}>Save</button>
             </Form>
@@ -113,4 +199,4 @@ class AccountCategory extends React.Component {
     }
 }
 
-export default AccountCategory;
+export default isLogged(AccountCategory);

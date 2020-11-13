@@ -12,6 +12,8 @@ import Grid, { Line, InLineGrid, Square } from "../Grid";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 import EmojiChoice from "./EmojiChoice/EmojiChoice";
 
+import isLogged from "../../hoc/isLogged";
+
 import AuthContext from "../../context/auth";
 import classes from "./WorkoutManager.module.css";
 
@@ -28,68 +30,61 @@ class WorkoutManager extends Component {
     }
 
     componentDidMount() {
-        const token = localStorage.getItem('authToken');
-        const expireDateToken = localStorage.getItem('authTokenExpireDate');
-
-        const currentDate = new Date(Date.now());
-
-        if (expireDateToken && new Date(expireDateToken) > currentDate) {
-            const config = {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`
+        const config = {
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${this.props.token}`
+            }
+        };
+        this.setState({
+            isLoading: true,
+        });
+        axios.get('http://localhost:8080/workout/today/info', config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    this.setState({
+                        isLoading: false,
+                        todayDone: response.data.data.done,
+                        todayFeeling: response.data.data.feeling
+                    });
+                } else if (response.status === 204) {
+                    this.setState({
+                        isLoading: false,
+                        todayDone: false,
+                        todayFeeling: null
+                    });
+                } else {
+                    // HERE HANDLE ERROR
                 }
-            };
-            this.setState({
-                isLoading: true,
-            });
-            axios.get('http://localhost:8080/workout/today/info', config)
-                .then(response => {
-                    if (response.status === 200 && response.data.success) {
-                        this.setState({
-                            isLoading: false,
-                            todayDone: response.data.data.done,
-                            todayFeeling: response.data.data.feeling
-                        });
-                    } else if (response.status === 204) {
-                        this.setState({
-                            isLoading: false,
-                            todayDone: false,
-                            todayFeeling: null
-                        });
-                    } else {
-                        // HERE HANDLE ERROR
-                    }
-                }).catch(err => {
-                    console.log(err); // HERE HANDLE ERROR
-                })
-            axios.get('http://localhost:8080/workout/year/2020', config)
-                .then(response => {
-                    if (response.status === 200 && response.data.success) {
-                        this.setState({
-                            isLoading: false,
-                            workouts: sortWorkoutsPerDate(response.data.data.workouts)
-                        });
-                    } else {
-                        // HERE HANDLE ERROR
-                    }
-                }).catch(err => {
-                    console.log(err); // HERE HANDLE ERROR
-                })
-            axios.get('http://localhost:8080/user/workout-info', config)
-                .then(response => {
-                    if (response.status === 200 && response.data.success) {
-                        this.setState({
-                            isLoading: false,
-                            nbrWorkouts: response.data.data.nb_workouts
-                        });
-                    } else {
-                        // HERE HANDLE ERROR
-                    }
-                }).catch(err => {
-                    console.log(err); // HERE HANDLE ERROR
-                })
-        }
+            }).catch(err => {
+                console.log(err); // HERE HANDLE ERROR
+            })
+        axios.get('http://localhost:8080/workout/year/2020', config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    this.setState({
+                        isLoading: false,
+                        workouts: sortWorkoutsPerDate(response.data.data.workouts)
+                    });
+                } else {
+                    // HERE HANDLE ERROR
+                }
+            }).catch(err => {
+                console.log(err); // HERE HANDLE ERROR
+            })
+        axios.get('http://localhost:8080/user/workout-info', config)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    this.setState({
+                        isLoading: false,
+                        nbrWorkouts: response.data.data.nb_workouts
+                    });
+                } else {
+                    // HERE HANDLE ERROR
+                }
+            }).catch(err => {
+                console.log(err); // HERE HANDLE ERROR
+            })
     }
 
     handleTodayDone = () => {
@@ -102,8 +97,6 @@ class WorkoutManager extends Component {
     }
 
     sendData = () => {
-        const token = localStorage.getItem('authToken');
-
         const data = {
             done: this.state.todayDone,
             feeling: this.state.todayFeeling
@@ -112,7 +105,7 @@ class WorkoutManager extends Component {
         const config = {
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`
+                Authorization: `Bearer ${this.props.token}`
             }
         };
 
@@ -214,4 +207,4 @@ class WorkoutManager extends Component {
     }
 }
 
-export default WorkoutManager;
+export default isLogged(WorkoutManager);

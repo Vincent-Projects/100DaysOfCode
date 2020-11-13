@@ -4,11 +4,17 @@ import AuthContext from "../../context/auth";
 import { Redirect } from "react-router-dom";
 import Form, { Input, Title } from "../../components/Form";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
+import { checkUsernameValidity } from "../../utils/form/inputCheck";
 
 class Signup extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            username: {
+                value: "",
+                error: null,
+                hasEnter: false,
+            },
             emailForm: "",
             passwordForm: "",
             usernameForm: "",
@@ -29,7 +35,22 @@ class Signup extends React.Component {
 
     handleUsernameChange = (event) => {
         this.setState({
-            usernameForm: event.target.value
+            username: {
+                value: event.target.value
+            },
+        });
+    }
+
+    handleUsernameFocusout = () => {
+        checkUsernameValidity(this.state.username.value, (err) => {
+            if (err) {
+                this.setState({
+                    username: {
+                        error: err,
+                        hasEnter: true,
+                    }
+                });
+            }
         });
     }
 
@@ -49,7 +70,19 @@ class Signup extends React.Component {
         event.preventDefault();
 
         const lowercaseEmail = this.state.emailForm.toLowerCase();
-        signup(this.state.usernameForm, lowercaseEmail, this.state.passwordForm, this.state.confirmForm);
+        signup(this.state.username.value, lowercaseEmail, this.state.passwordForm, this.state.confirmForm, (err) => {
+            if (err) {
+                this.setState((prevState) => {
+                    return {
+                        isLoading: false,
+                        username: {
+                            value: prevState.username.value,
+                            error: "Username already exists"
+                        }
+                    }
+                })
+            }
+        });
         this.setState({
             isLoading: true
         });
@@ -70,8 +103,10 @@ class Signup extends React.Component {
                                 <Input
                                     title="Username"
                                     type="text"
-                                    value={this.state.usernameForm}
+                                    value={this.state.username.value}
                                     handleChange={this.handleUsernameChange}
+                                    error={this.state.username.error}
+                                    handleFocusout={this.handleUsernameFocusout}
                                 />
 
                                 <Input

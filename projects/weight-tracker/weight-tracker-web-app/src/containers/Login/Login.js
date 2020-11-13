@@ -10,6 +10,10 @@ class Login extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
+            email: {
+                value: "",
+                error: null
+            },
             emailForm: "",
             passwordForm: "",
             emailFormError: null,
@@ -72,6 +76,7 @@ class Login extends React.Component {
                                     type="text"
                                     value={this.state.emailForm}
                                     handleChange={this.handleEmailChange}
+                                    error={this.state.email.error}
                                 />
 
                                 <Input

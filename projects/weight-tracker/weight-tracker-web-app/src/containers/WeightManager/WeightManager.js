@@ -18,6 +18,7 @@ import Grid, { Line, InLineGrid, Square } from "../Grid";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
 
+import isLogged from "../../hoc/isLogged";
 import AuthContext from "../../context/auth";
 import NumberInput from "./NumberInput/NumberInput";
 
@@ -45,57 +46,47 @@ class WeightManager extends React.Component {
     componentDidMount() {
         this._isMounted = true;
 
-        const token = localStorage.getItem("authToken");
-        const expireDate = localStorage.getItem("authTokenExpireDate");
-
-        if (token && expireDate) {
-            const expireDateFormat = new Date(expireDate);
-            const currentDate = new Date();
-
-            if (currentDate < expireDateFormat) {
-                this.setState({
-                    isLoading: true
-                });
-                axios.get("http://localhost:8080/weights/year/2020", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then(response => {
-                        if (response.status === 200 && response.data.success && this._isMounted) {
-                            let todayWeight = 0;
-
-                            if (response.data.data.weights.length > 0) {
-                                const sortedWeight = sortWeightPerDate(response.data.data.weights);
-                                if (isToday(sortedWeight[0].date))
-                                    todayWeight = sortedWeight[0].weight;
-                            }
-                            this.setState({
-                                weights: response.data.data.weights,
-                                todayWeight: todayWeight
-                            });
-                        }
-                    })
-
-                axios.get("http://localhost:8080/user/weight-info", {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Content-Type": "application/json"
-                    }
-                })
-                    .then(response => {
-                        if (response.status === 200 && response.data.success && this._isMounted) {
-                            this.setState({
-                                startWeight: response.data.data.start,
-                                goalWeight: response.data.data.goal,
-                                nbWeight: response.data.data.nb_weights,
-                                isLoading: false
-                            });
-                        }
-                    })
+        this.setState({
+            isLoading: true
+        });
+        axios.get("http://localhost:8080/weights/year/2020", {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`,
+                "Content-Type": "application/json"
             }
-        }
+        })
+            .then(response => {
+                if (response.status === 200 && response.data.success && this._isMounted) {
+                    let todayWeight = 0;
+
+                    if (response.data.data.weights.length > 0) {
+                        const sortedWeight = sortWeightPerDate(response.data.data.weights);
+                        if (isToday(sortedWeight[0].date))
+                            todayWeight = sortedWeight[0].weight;
+                    }
+                    this.setState({
+                        weights: response.data.data.weights,
+                        todayWeight: todayWeight
+                    });
+                }
+            })
+
+        axios.get("http://localhost:8080/user/weight-info", {
+            headers: {
+                Authorization: `Bearer ${this.props.token}`,
+                "Content-Type": "application/json"
+            }
+        })
+            .then(response => {
+                if (response.status === 200 && response.data.success && this._isMounted) {
+                    this.setState({
+                        startWeight: response.data.data.start,
+                        goalWeight: response.data.data.goal,
+                        nbWeight: response.data.data.nb_weights,
+                        isLoading: false
+                    });
+                }
+            })
     }
 
     componentWillUnmount() {
@@ -119,9 +110,6 @@ class WeightManager extends React.Component {
     sendWeight = () => {
         setTimeout(() => {
             if (this._typingNbr === 0 && !this._isTyping) {
-                const token = localStorage.getItem("authToken");
-                // ADD TOKEN EXPIRE VERIFICATION HERE
-
                 this.setState({
                     todayLoading: true,
                 });
@@ -130,7 +118,7 @@ class WeightManager extends React.Component {
                     weight: this.state.todayWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${this.props.token}`,
                         "Content-Type": "application/json"
                     }
                 }).then(response => {
@@ -206,10 +194,6 @@ class WeightManager extends React.Component {
     sendStartWeight = () => {
         setTimeout(() => {
             if (this._typingNbr === 0 && !this._isTyping) {
-                const token = localStorage.getItem("authToken");
-
-                //ADD TOKEN EXPIRATION CHECK 
-
                 this.setState({
                     startLoading: true,
                 });
@@ -219,7 +203,7 @@ class WeightManager extends React.Component {
                     goal: this.state.goalWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${this.props.token}`,
                         "Content-Type": "application/json"
                     }
                 }).then(response => {
@@ -278,10 +262,6 @@ class WeightManager extends React.Component {
     sendGoalWeight = () => {
         setTimeout(() => {
             if (this._typingNbr === 0 && !this._isTyping) {
-                const token = localStorage.getItem("authToken");
-
-                //ADD TOKEN EXPIRATION CHECK 
-
                 this.setState({
                     goalLoading: true,
                 });
@@ -291,7 +271,7 @@ class WeightManager extends React.Component {
                     goal: this.state.goalWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${this.props.token}`,
                         "Content-Type": "application/json"
                     }
                 }).then(response => {
@@ -422,5 +402,5 @@ class WeightManager extends React.Component {
     }
 }
 
-export default WeightManager;
+export default isLogged(WeightManager);
 

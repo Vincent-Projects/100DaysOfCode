@@ -63,7 +63,7 @@ class App extends Component {
         });
     }
 
-    signup = (username, email, password, confirmPassword) => {
+    signup = (username, email, password, confirmPassword, callback) => {
         axios.post('http://localhost:8080/auth/signup', {
             username: username,
             email: email,
@@ -78,7 +78,7 @@ class App extends Component {
                 this.props.history.replace('/login');
             }
         }).catch(err => {
-            console.log(this.props);
+            callback(err);
         });
     }
 
