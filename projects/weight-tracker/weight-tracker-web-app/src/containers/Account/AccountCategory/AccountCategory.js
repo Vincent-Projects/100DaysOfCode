@@ -193,7 +193,7 @@ class AccountCategory extends React.Component {
                     handleChange={this.handleLanguageChange}
                     selectedValue={this.state.language}
                 />
-                <button onClick={this.handleSave}>Save</button>
+                <button className={classes.Btn} onClick={this.handleSave}>Save</button>
             </Form>
         );
     }

@@ -13,6 +13,9 @@ import {
 } from '../../utils/weight/compareWeight';
 import { isToday } from "../../utils/date/compareDate";
 
+
+import CenteredErrorPage from "../../components/Errors/CenteredErrorPage/CenteredErrorPage";
+
 import Graph from '../Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import WeightCard from "./WeightCard/WeightCard";
@@ -32,7 +35,8 @@ class Dashboard extends React.Component {
             weights: [],
             start: null,
             goal: null,
-            isLoading: false
+            isLoading: false,
+            errors: null
         }
     }
 
@@ -82,15 +86,22 @@ class Dashboard extends React.Component {
                     goal = weightsInfo.goal !== -1 ? weightsInfo.goal : null;
                 }
 
-                this.setState({
-                    weights: yearWeights,
-                    start: start,
-                    goal: goal,
-                    isLoading: false
-                });
+                if (this._isMounted) {
+                    this.setState({
+                        weights: yearWeights,
+                        start: start,
+                        goal: goal,
+                        isLoading: false
+                    });
+                }
             })
             .catch(err => {
-                console.log(err);
+                if (this._isMounted) {
+                    this.setState({
+                        isLoading: false,
+                        errors: "There was a problem with fetching data. Try to reload later"
+                    });
+                }
             });
 
     }
@@ -166,6 +177,9 @@ class Dashboard extends React.Component {
         return (
             <AuthContext.Consumer>
                 {context => {
+                    if (this.state.errors) {
+                        return <CenteredErrorPage errorMessage={this.state.errors} />
+                    }
                     if (context.isAuth) {
                         return (
                             <Grid>

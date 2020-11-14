@@ -13,7 +13,7 @@ const Select = props => {
     return (
         <div className={classes.Container}>
             <p className={classes.Title}>{props.title}</p>
-            <select onChange={(event) => props.handleChange(event.target.selectedIndex)} defaultValue={props.values[selectedIndex]}>
+            <select className={classes.SelectContainer} onChange={(event) => props.handleChange(event.target.selectedIndex)} defaultValue={props.values[selectedIndex]}>
                 {options}
             </select>
         </div>

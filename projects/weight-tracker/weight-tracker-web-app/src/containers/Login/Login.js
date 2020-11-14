@@ -1,7 +1,7 @@
 import React from "react";
 import classes from "./Login.module.css";
 import AuthContext from "../../context/auth";
-import { Redirect } from "react-router-dom";
+import { Redirect, withRouter } from "react-router-dom";
 import Form, { Input, Title } from "../../components/Form";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 import axios from 'axios';
@@ -46,12 +46,15 @@ class Login extends React.Component {
                     emailFormError: "Please enter a valid email or password"
                 });
             } else {
+                this.props.history.replace('/');
+            }/*  else {
                 this.setState({
                     isLoading: false,
                 });
             }
-            console.log("success");
+            console.log("success"); */
         });
+
         this.setState({
             isLoading: true,
         });
@@ -59,13 +62,12 @@ class Login extends React.Component {
     }
 
     render() {
+        console.log("i rerender");
         return (
             <AuthContext.Consumer>
                 {context => {
                     if (context.isAuth) {
                         return <Redirect to="/" />
-                    } else if (this.state.isLoading) {
-                        return <LoadingSpiner />
                     } else {
                         return (
                             <Form>
@@ -88,7 +90,7 @@ class Login extends React.Component {
                                 />
 
                                 <div className={classes.LoginGroup}>
-                                    <button className={classes.LoginBtn} onClick={(event) => this.handleLogin(event, context.login)}>Login</button>
+                                    {this.state.isLoading ? <LoadingSpiner /> : <button className={classes.LoginBtn} onClick={(event) => this.handleLogin(event, context.login)}>Login</button>}
                                 </div>
                                 <a href="#">reset password</a>
                             </Form>
@@ -100,7 +102,7 @@ class Login extends React.Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);
 
 /* axios.post('http://localhost:8080/auth/login', {
             email: lowercaseEmail,

@@ -6,6 +6,8 @@ import {
 } from "react-router-dom";
 import axios from "axios";
 
+import api from "../api";
+
 import AuthContext from "../context/auth";
 
 import ToolBar from "./ToolBar/ToolBar";
@@ -30,30 +32,26 @@ class App extends Component {
 
 
     login = (email, password, callback) => {
+        const data = { email, password };
 
-        axios.post('http://localhost:8080/auth/login', {
-            email: email,
-            password: password
-        }, {
-            headers: {
-                "Content-Type": "application/json"
-            }
-        }).then(response => {
-            if (response.status === 200 && response.data.success) {
-                localStorage.setItem("authToken", response.data.data.token);
-                const expireDate = new Date();
-                expireDate.setSeconds(expireDate.getSeconds() + response.data.data.expireIn);
-                localStorage.setItem("authTokenExpireDate", expireDate);
-                this.setState({
-                    isAuth: true
-                });
-                callback(true);
-            } else {
+        api.post('/auth/login', data)
+            .then(response => {
+                if (response.status === 200 && response.data.success) {
+                    localStorage.setItem("authToken", response.data.data.token);
+                    const expireDate = new Date();
+                    expireDate.setSeconds(expireDate.getSeconds() + response.data.data.expireIn);
+                    localStorage.setItem("authTokenExpireDate", expireDate);
+
+                    this.setState({
+                        isAuth: true
+                    })
+                    callback(true);
+                } else {
+                    callback(false);
+                }
+            }).catch(err => {
                 callback(false);
-            }
-        }).catch(err => {
-            callback(false);
-        });
+            });
     }
 
     logout = () => {
@@ -98,6 +96,8 @@ class App extends Component {
             } else {
                 this.logout();
             }
+        } else {
+            this.logout();
         }
     }
 

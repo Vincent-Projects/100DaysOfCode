@@ -19,7 +19,6 @@ class Account extends Component {
     }
 
     render() {
-        console.log(this.props.match.url)
         return (
             <AuthContext.Consumer>
                 {context => {
