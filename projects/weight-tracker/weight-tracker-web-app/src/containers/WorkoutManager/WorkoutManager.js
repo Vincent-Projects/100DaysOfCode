@@ -1,16 +1,17 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import axios from "axios";
+import api from "../../api";
 
 import {
     sortWorkoutsPerDate,
     filterNumberWorkoutsPerMonth
 } from "../../utils/workouts/compareWorkout";
 
-import Graph from '../Graph/Graph';
+import Graph from '../../components/Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 import EmojiChoice from "./EmojiChoice/EmojiChoice";
+import Alert from "../../components/Alert/Alert";
 
 import isLogged from "../../hoc/isLogged";
 
@@ -26,20 +27,21 @@ class WorkoutManager extends Component {
             todayDone: false,
             workouts: [],
             nbrWorkouts: 0,
+            isAlertActive: false,
+            alertContent: null
         }
     }
 
     componentDidMount() {
         const config = {
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${this.props.token}`
             }
         };
         this.setState({
             isLoading: true,
         });
-        axios.get('http://localhost:8080/workout/today/info', config)
+        api.get('/today/info', config)
             .then(response => {
                 if (response.status === 200 && response.data.success) {
                     this.setState({
@@ -59,7 +61,7 @@ class WorkoutManager extends Component {
             }).catch(err => {
                 console.log(err); // HERE HANDLE ERROR
             })
-        axios.get('http://localhost:8080/workout/year/2020', config)
+        api.get('/workout/year/2020', config)
             .then(response => {
                 if (response.status === 200 && response.data.success) {
                     this.setState({
@@ -72,7 +74,7 @@ class WorkoutManager extends Component {
             }).catch(err => {
                 console.log(err); // HERE HANDLE ERROR
             })
-        axios.get('http://localhost:8080/user/workout-info', config)
+        api.get('/user/workout-info', config)
             .then(response => {
                 if (response.status === 200 && response.data.success) {
                     this.setState({
@@ -104,15 +106,17 @@ class WorkoutManager extends Component {
 
         const config = {
             headers: {
-                "Content-Type": "application/json",
                 Authorization: `Bearer ${this.props.token}`
             }
         };
 
-        axios.post("http://localhost:8080/workout/today/add", data, config)
+        api.post("/workout/today/add", data, config)
             .then(response => {
                 if (response.status === 200 && response.data.success) {
-                    alert(response.data.message);
+                    this.setState({
+                        isAlertActive: true,
+                        alertContent: response.data.message
+                    });
                 } else {
                     alert("Error"); // Remove the last change from state
                 }
@@ -137,6 +141,16 @@ class WorkoutManager extends Component {
                     if (context.isAuth) {
                         return (
                             <Grid>
+                                <Alert
+                                    title="Successfull Save"
+                                    content={this.state.alertContent}
+                                    handleValid={() => {
+                                        this.setState({ isAlertActive: false })
+                                        // HERE MAKE UPDATE OF OTHER DATA
+                                    }}
+                                    validMessage={"Good !"}
+                                    isActive={this.state.isAlertActive}
+                                />
                                 <Line lineLevel="One">
                                     <Square>
                                         <Graph

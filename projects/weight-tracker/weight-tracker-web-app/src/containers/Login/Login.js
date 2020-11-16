@@ -4,7 +4,6 @@ import AuthContext from "../../context/auth";
 import { Redirect, withRouter } from "react-router-dom";
 import Form, { Input, Title } from "../../components/Form";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
-import axios from 'axios';
 
 class Login extends React.Component {
     constructor(props) {
@@ -14,6 +13,11 @@ class Login extends React.Component {
                 value: "",
                 error: null
             },
+            password: {
+                value: "",
+                error: null
+            },
+            globalError: null,
             emailForm: "",
             passwordForm: "",
             emailFormError: null,
@@ -39,20 +43,34 @@ class Login extends React.Component {
 
         const lowercaseEmail = this.state.emailForm.toLowerCase();
 
-        login(lowercaseEmail, this.state.passwordForm, (success) => {
-            if (!success) {
+        login(lowercaseEmail, this.state.passwordForm, (err, { success, message, data }, cb) => {
+            if (err && !success) {
+                let emailErr = null;
+                let passwordErr = null;
+                let generalError = null;
+
+                if (data.error.email) {
+                    emailErr = message;
+                } else if (data.error.password) {
+                    passwordErr = message
+                } else {
+                    generalError = message;
+                }
+
                 this.setState({
-                    isLoading: false,
-                    emailFormError: "Please enter a valid email or password"
+                    email: {
+                        error: emailErr
+                    },
+                    password: {
+                        error: passwordErr
+                    },
+                    globalError: generalError,
+                    isLoading: false
                 });
-            } else {
-                this.props.history.replace('/');
-            }/*  else {
-                this.setState({
-                    isLoading: false,
-                });
+                return false;
+            } else if (success) {
+                cb();
             }
-            console.log("success"); */
         });
 
         this.setState({
@@ -62,7 +80,6 @@ class Login extends React.Component {
     }
 
     render() {
-        console.log("i rerender");
         return (
             <AuthContext.Consumer>
                 {context => {
@@ -87,6 +104,7 @@ class Login extends React.Component {
                                     value={this.state.passwordForm}
                                     handleChange={this.handlePasswordChange}
                                     info="8 characters minimum"
+                                    error={this.state.password.error}
                                 />
 
                                 <div className={classes.LoginGroup}>

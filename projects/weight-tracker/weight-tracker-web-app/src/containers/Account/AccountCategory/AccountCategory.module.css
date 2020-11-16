@@ -5,4 +5,12 @@
     padding: 0.4rem 0.9rem;
     font-size: 1.2rem;
     margin-top: 1rem;
+    text-decoration: none;
+    transition: 300ms ease-in-out;
+    cursor: pointer;
+}
+
+.Btn:hover {
+    background-color: var(--primary);
+    color: var(--on-primary);
 }

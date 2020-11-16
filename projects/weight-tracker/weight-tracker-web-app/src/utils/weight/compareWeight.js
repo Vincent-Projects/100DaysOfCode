@@ -111,7 +111,8 @@ export const computeLastWeightComponent = (weights, goal, start) => {
                     index = 1;
                 }
             } else {
-                return null;
+                yesterday = false;
+                index = 0;
             }
 
             let date = yesterday ? null : new Date(weights[index].date);

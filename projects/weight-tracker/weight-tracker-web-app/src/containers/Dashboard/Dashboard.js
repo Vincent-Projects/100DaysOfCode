@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Redirect } from 'react-router-dom';
+import React from 'react';
+import { Redirect, Link } from 'react-router-dom';
 import api from "../../api";
 
 import {
@@ -16,14 +16,17 @@ import { isToday } from "../../utils/date/compareDate";
 
 import CenteredErrorPage from "../../components/Errors/CenteredErrorPage/CenteredErrorPage";
 
-import Graph from '../Graph/Graph';
+import Graph from '../../components/Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import WeightCard from "./WeightCard/WeightCard";
 import LoadingSpinner from "../../components/LoadingSpiner/LoadingSpiner";
 import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
 
 import isLogged from "../../hoc/isLogged";
+
 import AuthContext from "../../context/auth";
+import WeightsContext from "../../context/weights";
+
 import classes from './Dashboard.module.css';
 
 class Dashboard extends React.Component {
@@ -41,6 +44,7 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
+        console.log(this.context);
         this._isMounted = true;
 
         const config = {
@@ -120,7 +124,6 @@ class Dashboard extends React.Component {
         const averageWeightsYear = averageWeightPerMonths(this.state.weights);
         const currentWeek = weightToCurrentWeekGraph(this.state.weights);
         const lastWeight = computeLastWeightComponent(this.state.weights, this.state.goal, this.state.start);
-
         const lastWeightComponent = (
             lastWeight
                 ? <WeightCard
@@ -133,7 +136,10 @@ class Dashboard extends React.Component {
                     helpTitle="Last Weight Recorded"
                     helpContent="We compute the last weight recorded by searching for the last weight that you kept track of that is not today."
                 />
-                : <p className={classes.Centered}>No Weight Recorded Yet</p>
+                : <div className={classes.Centered}>
+                    <p>No Weight Recorded Yet</p>
+                    <Link className={classes.Btn} to="/weight-manager">Save your weigth</Link>
+                </div>
         );
 
         const todayWeight = todayRecordedWeight(this.state.weights, this.state.goal, this.state.start);
@@ -150,7 +156,10 @@ class Dashboard extends React.Component {
                     helpTitle="Today Weight Record"
                     helpContent='This is the weight you recorded today. If you did not record any weight today then you see the message "No Weight Recorded"'
                 />
-                : <p className={classes.Centered}>No Weight Recorded Yet</p>
+                : <div className={classes.Centered}>
+                    <p>No Weight Recorded Yet</p>
+                    <Link className={classes.Btn} to="/weight-manager">Save your weigth</Link>
+                </div>
         );
 
         const isGoalSet = (this.state.start && this.state.goal ? true : false);
@@ -242,6 +251,8 @@ class Dashboard extends React.Component {
         );
     }
 }
+
+Dashboard.contextType = WeightsContext;
 
 export default isLogged(Dashboard);
 

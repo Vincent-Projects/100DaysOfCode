@@ -1,0 +1,57 @@
+.Container {
+    z-index: 200;
+    background-color: var(--on-primary);
+    color: var(--primary);
+    border-radius: 10px;
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+    border: 1px solid #ccc;
+    padding: 1rem;
+    box-sizing: border-box;
+    position: absolute;
+    top: -300px;
+    left: 50%;
+    width: 300px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
+.Active {
+    animation-timing-function: ease-in;
+    animation-duration: 1s;
+    animation-name: fade-in;
+    animation-fill-mode: forwards;
+}
+
+@keyframes fade-in {
+    0% {
+        top: -300px;
+    }
+    100% {
+        top: 5rem;
+    }
+}
+
+.BtnContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.Btn {
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    padding: 0.4rem 0.9rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-decoration: none;
+    transition: 300ms ease-in-out;
+    cursor: pointer;
+}
+
+.Btn:hover {
+    background-color: var(--primary);
+    color: var(--on-primary);
+}

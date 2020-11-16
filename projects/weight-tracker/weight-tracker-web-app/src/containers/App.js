@@ -4,11 +4,11 @@ import {
     Switch,
     withRouter,
 } from "react-router-dom";
-import axios from "axios";
 
 import api from "../api";
 
 import AuthContext from "../context/auth";
+import WeightsContext from "../context/weights";
 
 import ToolBar from "./ToolBar/ToolBar";
 import Dashboard from "./Dashboard/Dashboard";
@@ -42,15 +42,16 @@ class App extends Component {
                     expireDate.setSeconds(expireDate.getSeconds() + response.data.data.expireIn);
                     localStorage.setItem("authTokenExpireDate", expireDate);
 
-                    this.setState({
-                        isAuth: true
-                    })
-                    callback(true);
-                } else {
-                    callback(false);
+                    callback(null, response.data, () => {
+                        this.setState({
+                            isAuth: true
+                        })
+                    });
                 }
-            }).catch(err => {
-                callback(false);
+            }).catch((err) => {
+                if (err.response) {
+                    callback(err, err.response.data);
+                }
             });
     }
 
@@ -62,15 +63,11 @@ class App extends Component {
     }
 
     signup = (username, email, password, confirmPassword, callback) => {
-        axios.post('http://localhost:8080/auth/signup', {
+        api.post('/auth/signup', {
             username: username,
             email: email,
             password: password,
             confirmPassword: confirmPassword
-        }, {
-            headers: {
-                "Content-Type": "application/json"
-            }
         }).then(response => {
             if (response.status === 201 && response.data.success) {
                 this.props.history.replace('/login');
@@ -101,6 +98,10 @@ class App extends Component {
         }
     }
 
+    getYearWeights = () => {
+        console.log("I fetch data from the api");
+    }
+
     render() {
         return (
             <AuthContext.Provider value={{
@@ -123,10 +124,7 @@ class App extends Component {
                                 path="/signup"
                                 component={Signup}
                             />
-                            <Route
-                                path="/weight-manager"
-                                component={WeightManager}
-                            />
+
                             <Route
                                 path="/workout-manager"
                                 component={WorkoutManager}
@@ -135,10 +133,20 @@ class App extends Component {
                                 path="/account"
                                 component={Account}
                             />
-                            <Route
-                                path="/"
-                                component={Dashboard}
-                            />
+                            <WeightsContext.Provider value={{
+                                weights: [],
+                                getYearWeights: this.getYearWeights
+                            }}>
+                                <Route
+                                    path="/weight-manager"
+                                    component={WeightManager}
+                                />
+
+                                <Route
+                                    path="/"
+                                    component={Dashboard}
+                                />
+                            </WeightsContext.Provider>
                         </Switch>
                     </div>
                 </div>

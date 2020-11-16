@@ -42,8 +42,25 @@
 
 .Centered {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     width: 100%;
     height: 100%;
+}
+
+.Btn {
+    border: 2px solid var(--primary);
+    background: transparent;
+    color: var(--primary);
+    padding: 0.4rem 0.9rem;
+    font-size: 1.2rem;
+    margin-top: 1rem;
+    text-decoration: none;
+    transition: 300ms ease-in-out;
+}
+
+.Btn:hover {
+    background-color: var(--primary);
+    color: var(--on-primary);
 }

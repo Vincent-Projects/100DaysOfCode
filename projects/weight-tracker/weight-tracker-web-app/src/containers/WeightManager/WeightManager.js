@@ -1,9 +1,10 @@
 import React from 'react';
-import axios from 'axios';
 import { Redirect } from 'react-router-dom';
 
 import classes from './WeightManager.module.css';
 
+
+import api from "../../api";
 import { isToday } from "../../utils/date/compareDate";
 import {
     weightsDiff,
@@ -13,7 +14,7 @@ import {
     sortWeightPerDate
 } from '../../utils/weight/compareWeight';
 
-import Graph from '../Graph/Graph';
+import Graph from '../../components/Graph/Graph';
 import Grid, { Line, InLineGrid, Square } from "../Grid";
 import LoadingSpiner from "../../components/LoadingSpiner/LoadingSpiner";
 import MonthWeightInfo from "../../components/MonthWeightInfo/MonthWeightInfo";
@@ -49,10 +50,9 @@ class WeightManager extends React.Component {
         this.setState({
             isLoading: true
         });
-        axios.get("http://localhost:8080/weights/year/2020", {
+        api.get("/weights/year/2020", {
             headers: {
-                Authorization: `Bearer ${this.props.token}`,
-                "Content-Type": "application/json"
+                Authorization: `Bearer ${this.props.token}`
             }
         })
             .then(response => {
@@ -71,10 +71,9 @@ class WeightManager extends React.Component {
                 }
             })
 
-        axios.get("http://localhost:8080/user/weight-info", {
+        api.get("/user/weight-info", {
             headers: {
-                Authorization: `Bearer ${this.props.token}`,
-                "Content-Type": "application/json"
+                Authorization: `Bearer ${this.props.token}`
             }
         })
             .then(response => {
@@ -114,12 +113,11 @@ class WeightManager extends React.Component {
                     todayLoading: true,
                 });
 
-                axios.post("http://localhost:8080/weights/today/add", {
+                api.post("/weights/today/add", {
                     weight: this.state.todayWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${this.props.token}`,
-                        "Content-Type": "application/json"
+                        Authorization: `Bearer ${this.props.token}`
                     }
                 }).then(response => {
                     if (response.status === 200 && response.data.success) {
@@ -198,13 +196,12 @@ class WeightManager extends React.Component {
                     startLoading: true,
                 });
 
-                axios.post("http://localhost:8080/user/weight-info/update", {
+                api.post("/user/weight-info/update", {
                     start: this.state.startWeight,
                     goal: this.state.goalWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${this.props.token}`,
-                        "Content-Type": "application/json"
+                        Authorization: `Bearer ${this.props.token}`
                     }
                 }).then(response => {
                     if (response.status === 201 && response.data.success) {
@@ -266,13 +263,12 @@ class WeightManager extends React.Component {
                     goalLoading: true,
                 });
 
-                axios.post("http://localhost:8080/user/weight-info/update", {
+                api.post("/user/weight-info/update", {
                     start: this.state.startWeight,
                     goal: this.state.goalWeight
                 }, {
                     headers: {
-                        Authorization: `Bearer ${this.props.token}`,
-                        "Content-Type": "application/json"
+                        Authorization: `Bearer ${this.props.token}`
                     }
                 }).then(response => {
                     if (response.status === 201 && response.data.success) {
