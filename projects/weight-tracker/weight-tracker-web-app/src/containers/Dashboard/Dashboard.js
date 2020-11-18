@@ -1,6 +1,7 @@
 import React from 'react';
 import { Redirect, Link } from 'react-router-dom';
 import api from "../../api";
+import { connect } from "react-redux";
 
 import {
     weightsDiff,
@@ -44,7 +45,6 @@ class Dashboard extends React.Component {
     }
 
     componentDidMount() {
-        console.log(this.context);
         this._isMounted = true;
 
         const config = {
@@ -182,26 +182,23 @@ class Dashboard extends React.Component {
                 : <p className={classes.Centered}>No Goal Recorded yet</p>
         );
 
-        // CREATE A WAY TO GENERATE TOOLTIP FOR GRAPH AUTOMATICALLY
-        return (
-            <AuthContext.Consumer>
-                {context => {
-                    if (this.state.errors) {
-                        return <CenteredErrorPage errorMessage={this.state.errors} />
-                    }
-                    if (context.isAuth) {
-                        return (
-                            <Grid>
-                                <Line lineLevel="One">
-                                    <Square>
-                                        <Graph
-                                            title="Average Weight per Month"
-                                            xValues={["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}
-                                            data={averageWeightsYear.avgWeights}
-                                            nbrValueMax={averageWeightsYear.nbrDays}
-                                            nbrValue={averageWeightsYear.nbrValues}
+        if (this.state.errors) {
+            return <CenteredErrorPage errorMessage={this.state.errors} />
+        }
 
-                                        />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE 
+        if (this.props.isAuth) {
+            return (
+                <Grid>
+                    <Line lineLevel="One">
+                        <Square>
+                            <Graph
+                                title="Average Weight per Month"
+                                xValues={["January", "Febuary", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]}
+                                data={averageWeightsYear.avgWeights}
+                                nbrValueMax={averageWeightsYear.nbrDays}
+                                nbrValue={averageWeightsYear.nbrValues}
+
+                            />{/* HERE NEED A FUNCTION TO GENERATE THOSE VALUE 
                                         
                                         hoverComponent={[null, null, null, null, null, null, null, null, null, null,
                                                 <MonthWeightInfo
@@ -215,44 +212,49 @@ class Dashboard extends React.Component {
                                         
                                         
                                         */}
-                                    </Square>
-                                </Line>
+                        </Square>
+                    </Line>
 
-                                <Line lineLevel="Two">
-                                    <InLineGrid>
-                                        <Square rowLevel="One">
-                                            {lastWeightComponent}
-                                        </Square>
-                                        <Square rowLevel="Two">
-                                            {todayWeightComponent}
-                                        </Square>
-                                        <Square rowLevel="Three">
-                                            {goalComponent}
-                                        </Square>
-                                    </InLineGrid>
-                                </Line>
+                    <Line lineLevel="Two">
+                        <InLineGrid>
+                            <Square rowLevel="One">
+                                {lastWeightComponent}
+                            </Square>
+                            <Square rowLevel="Two">
+                                {todayWeightComponent}
+                            </Square>
+                            <Square rowLevel="Three">
+                                {goalComponent}
+                            </Square>
+                        </InLineGrid>
+                    </Line>
 
-                                <Line lineLevel="Three">
-                                    <Square>
-                                        <Graph
-                                            title="Weights of the week"
-                                            xValues={["Monday", "Tuesday", "Wednesday", "Thurdsay", "Friday", "Saturday", "Sunday"]}
-                                            data={currentWeek}
-                                        />
-                                    </Square>
-                                </Line>
-                            </Grid>
-                        )
-                    } else {
-                        return <Redirect to="login" />
-                    }
-                }}
-            </AuthContext.Consumer>
-        );
+                    <Line lineLevel="Three">
+                        <Square>
+                            <Graph
+                                title="Weights of the week"
+                                xValues={["Monday", "Tuesday", "Wednesday", "Thurdsay", "Friday", "Saturday", "Sunday"]}
+                                data={currentWeek}
+                            />
+                        </Square>
+                    </Line>
+                </Grid>
+            )
+        } else {
+            return <Redirect to="login" />
+        }
+        // CREATE A WAY TO GENERATE TOOLTIP FOR GRAPH AUTOMATICALLY
     }
 }
 
 Dashboard.contextType = WeightsContext;
 
-export default isLogged(Dashboard);
+const mapStateToProps = state => {
+    return {
+        isAuth: state.isAuth,
+        token: state.token
+    }
+};
+
+export default connect(mapStateToProps)(Dashboard);
 

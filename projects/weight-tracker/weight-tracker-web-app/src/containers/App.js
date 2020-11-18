@@ -4,6 +4,7 @@ import {
     Switch,
     withRouter,
 } from "react-router-dom";
+import { connect } from "react-redux";
 
 import api from "../api";
 
@@ -42,11 +43,12 @@ class App extends Component {
                     expireDate.setSeconds(expireDate.getSeconds() + response.data.data.expireIn);
                     localStorage.setItem("authTokenExpireDate", expireDate);
 
-                    callback(null, response.data, () => {
+                    this.props.login();
+                    /* callback(null, response.data, () => {
                         this.setState({
                             isAuth: true
                         })
-                    });
+                    }); */
                 }
             }).catch((err) => {
                 if (err.response) {
@@ -87,14 +89,16 @@ class App extends Component {
             const currentDate = new Date();
 
             if (currentDate < expireDateFormat) {
-                this.setState({
+
+                this.props.login(token, expireDate);
+                /* this.setState({
                     isAuth: true,
-                });
+                }); */
             } else {
-                this.logout();
+                this.props.logout();
             }
         } else {
-            this.logout();
+            this.props.logout();
         }
     }
 
@@ -105,7 +109,7 @@ class App extends Component {
     render() {
         return (
             <AuthContext.Provider value={{
-                isAuth: this.state.isAuth,
+                isAuth: this.props.isAuth,
                 login: this.login,
                 logout: this.logout,
                 signup: this.signup
@@ -114,10 +118,24 @@ class App extends Component {
                     <ToolBar />
                     <div className={classes.ToolBarMargin}>
                         <Switch>
+                            {/* <WeightsContext.Provider value={{
+                                weights: [],
+                                getYearWeights: this.getYearWeights
+                            }}> */}
+                            <Route
+                                path="/weight-manager"
+                                component={WeightManager}
+                            />
+
+                            {/* </WeightsContext.Provider> */}
                             <Route
                                 exact
                                 path="/login"
                                 component={Login}
+                            />
+                            <Route
+                                path="/workout-manager"
+                                component={WorkoutManager}
                             />
                             <Route
                                 exact
@@ -126,27 +144,13 @@ class App extends Component {
                             />
 
                             <Route
-                                path="/workout-manager"
-                                component={WorkoutManager}
-                            />
-                            <Route
                                 path="/account"
                                 component={Account}
                             />
-                            <WeightsContext.Provider value={{
-                                weights: [],
-                                getYearWeights: this.getYearWeights
-                            }}>
-                                <Route
-                                    path="/weight-manager"
-                                    component={WeightManager}
-                                />
-
-                                <Route
-                                    path="/"
-                                    component={Dashboard}
-                                />
-                            </WeightsContext.Provider>
+                            <Route
+                                path="/"
+                                component={Dashboard}
+                            />
                         </Switch>
                     </div>
                 </div>
@@ -155,5 +159,18 @@ class App extends Component {
     }
 }
 
+const mapStateToProps = state => {
+    return {
+        isAuth: state.isAuth
+    };
+}
 
-export default withRouter(App);
+const mapDispatchToProps = dispatch => {
+    return {
+        login: (token, tokenExpireDate) => dispatch({ type: "LOGIN", payload: { token: token, tokenExpireDate } }),
+        logout: () => dispatch({ type: "LOGOUT" })
+    }
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

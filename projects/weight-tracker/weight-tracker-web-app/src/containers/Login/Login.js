@@ -1,4 +1,5 @@
 import React from "react";
+import { connect } from "react-redux";
 import classes from "./Login.module.css";
 import AuthContext from "../../context/auth";
 import { Redirect, withRouter } from "react-router-dom";
@@ -80,47 +81,59 @@ class Login extends React.Component {
     }
 
     render() {
+        if (this.props.isAuth) {
+            return <Redirect to="/" />
+        }
+
         return (
             <AuthContext.Consumer>
                 {context => {
-                    if (context.isAuth) {
+                    /*if (context.isAuth)  {
                         return <Redirect to="/" />
-                    } else {
-                        return (
-                            <Form>
-                                <Title title="Welcome to WeighTrack" subTitle="Let's get fit !" />
-                                {this.state.emailFormError ? <p className={classes.ErrorForm}>{this.state.emailFormError}</p> : null}
-                                <Input
-                                    title="Email"
-                                    type="text"
-                                    value={this.state.emailForm}
-                                    handleChange={this.handleEmailChange}
-                                    error={this.state.email.error}
-                                />
+                    } else   {*/
+                    return (
+                        <Form>
+                            <Title title="Welcome to WeighTrack" subTitle="Let's get fit !" />
+                            {this.state.emailFormError ? <p className={classes.ErrorForm}>{this.state.emailFormError}</p> : null}
+                            <Input
+                                title="Email"
+                                type="text"
+                                value={this.state.emailForm}
+                                handleChange={this.handleEmailChange}
+                                error={this.state.email.error}
+                            />
 
-                                <Input
-                                    title="Password"
-                                    type="password"
-                                    value={this.state.passwordForm}
-                                    handleChange={this.handlePasswordChange}
-                                    info="8 characters minimum"
-                                    error={this.state.password.error}
-                                />
+                            <Input
+                                title="Password"
+                                type="password"
+                                value={this.state.passwordForm}
+                                handleChange={this.handlePasswordChange}
+                                info="8 characters minimum"
+                                error={this.state.password.error}
+                            />
 
-                                <div className={classes.LoginGroup}>
-                                    {this.state.isLoading ? <LoadingSpiner /> : <button className={classes.LoginBtn} onClick={(event) => this.handleLogin(event, context.login)}>Login</button>}
-                                </div>
-                                <a href="#">reset password</a>
-                            </Form>
-                        );
-                    }
-                }}
+                            <div className={classes.LoginGroup}>
+                                {this.state.isLoading ? <LoadingSpiner /> : <button className={classes.LoginBtn} onClick={(event) => this.handleLogin(event, context.login)}>Login</button>}
+                            </div>
+                            <a href="#">reset password</a>
+                        </Form>
+                    );
+                }
+                    /*}*/}
             </AuthContext.Consumer>
         )
     }
+    /*}*/
+
 }
 
-export default withRouter(Login);
+const mapStateToProps = state => {
+    return {
+        isAuth: state.isAuth
+    };
+}
+
+export default connect(mapStateToProps)(withRouter(Login));
 
 /* axios.post('http://localhost:8080/auth/login', {
             email: lowercaseEmail,

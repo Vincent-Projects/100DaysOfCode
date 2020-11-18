@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { connect } from "react-redux"
 import {
     NavLink,
     Route,
@@ -35,7 +36,7 @@ class Account extends Component {
                                     <NavLink className={classes.Category} activeClassName={classes.Active} to={this.props.match.url + '/notifications'}>
                                         <p>Notifications</p>
                                     </NavLink>
-                                    <NavLink className={`${classes.Category} ${classes.Logout}`} onClick={context.logout} to={"/login"}>
+                                    <NavLink className={`${classes.Category} ${classes.Logout}`} onClick={this.props.logout} to={"/login"}>
                                         <p>Log out</p>
                                     </NavLink>
                                 </div>
@@ -66,4 +67,10 @@ class Account extends Component {
     }
 }
 
-export default Account;
+const mapDispatchToProps = dispatch => {
+    return {
+        logout: () => dispatch({ type: "LOGOUT" })
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Account);
